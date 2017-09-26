@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .btn {
+            width: 80px;
+            height: 80px;
+            text-align: center;
+            line-height: 80px;
+            background: #aaa;
+            color: #fff;
+            font-size: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 3px #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 15px 10px;
+            /*float: left;*/
+            display: inline-block;
+        }
+
+        /*        .btn:hover{
+                    color: red;
+                    box-shadow: 0 0 0 #fff;
+                    font-weight: bold;
+                }*/
+        .line {
+            /*overflow: hidden;*/
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="line">
+    <div class="btn" id="one">1</div>
+    <div class="btn">2</div>
+    <div class="btn">3</div>
+    <div class="btn">4</div>
+    <div class="btn">5</div>
+    <div class="btn">6</div>
+    <div class="btn">7</div>
+    <div class="btn">8</div>
+    <div class="btn">9</div>
+    <div class="btn">0</div>
+</div>
+<div class='line'>
+    <div class="btn">Q</div>
+    <div class="btn">W</div>
+    <div class="btn">E</div>
+    <div class="btn">R</div>
+    <div class="btn">T</div>
+    <div class="btn">Y</div>
+    <div class="btn">U</div>
+    <div class="btn">I</div>
+    <div class="btn">O</div>
+    <div class="btn">P</div>
+</div>
+<div class='line'>
+    <div class="btn">A</div>
+    <div class="btn">S</div>
+    <div class="btn">D</div>
+    <div class="btn">F</div>
+    <div class="btn">G</div>
+    <div class="btn">H</div>
+    <div class="btn">J</div>
+    <div class="btn">K</div>
+    <div class="btn">L</div>
+</div>
+<div class='line'>
+    <div class="btn">Z</div>
+    <div class="btn">X</div>
+    <div class="btn">C</div>
+    <div class="btn">V</div>
+    <div class="btn">B</div>
+    <div class="btn">N</div>
+    <div class="btn">M</div>
+</div>
+<script>
+
+    var KEYCODE = [49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 65, 83, 68, 70, 71, 72, 74, 75, 76, 90, 88, 67, 86, 66, 78, 77];//存放键盘的code码
+    /*
+     document.onkeydown = function (event) {
+     //console.log(event.keyCode);
+     var code = event.keyCode;
+     if(code == 49){
+     var one = document.getElementById('one');
+     one.style.color = 'red';
+     one.style.boxShadow = '0 0 0 #fff';
+     one.style.fontWeight = 'bold';
+     }
+     };
+     document.onkeyup = function (event) {
+     //console.log(event.keyCode);
+     var code = event.keyCode;
+     KEYCODE.push(code);
+     if(code == 49){
+     var one = document.getElementById('one');
+     one.style.color = '#fff';
+     one.style.boxShadow = '0 3px 3px #666';
+     one.style.fontWeight = 'normal';
+     }
+     };
+     */
+    var btns = document.getElementsByClassName('btn');
+    //console.log(btns);
+    document.onkeydown = function (event) {
+        var code = event.keyCode;
+        var index = KEYCODE.indexOf(code);//获取元素在数组中的位置!!!!
+        //通过在数组中的位置,找到对应元素节点数组中的元素,
+        //因为keycode数组中元素的位置和元素节点数组中的位置是一一对应的!!
+        var obj = btns[index];
+        obj.style.color = 'red';
+        obj.style.boxShadow = '0 0 0 #fff';
+        obj.style.fontWeight = 'bold';
+    };
+    document.onkeyup = function (event) {
+        var code = event.keyCode;
+        var index = KEYCODE.indexOf(code);//获取元素在数组中的位置!!!!
+        //通过在数组中的位置,找到对应元素节点数组中的元素,
+        //因为keycode数组中元素的位置和元素节点数组中的位置是一一对应的!!
+        var obj = btns[index];
+        obj.style.color = '#fff';
+        obj.style.boxShadow = '0 3px 3px #666';
+        obj.style.fontWeight = 'normal';
+    };
+</script>
+</body>
+</html>
