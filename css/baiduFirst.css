@@ -1,0 +1,132 @@
+*{
+    padding:0;
+    margin:0;
+}
+body{
+    text-align: center;
+    /*overflow: hidden;*/
+    height: 600px;
+}
+#nav{
+    padding: 15px;
+    overflow: hidden;
+}
+#nav div,#nav ul{
+    float: right;
+}
+#nav ul{
+    list-style: none;
+}
+#nav ul li{
+    display: inline-block;
+    margin-right: 15px;
+    font-size: 14px;
+}
+#nav ul li a{
+    color: #0f0f0f;
+    font-weight:bold;
+}
+#nav ul li a:hover{
+    color: rgb(51,136,255);
+}
+#nav div{
+    width: 60px;
+    height: 26px;
+    line-height: 26px;
+    color: #ffffff;
+    font-size: 12px;
+    background: rgb(51,136,255);
+}
+#baiduImg img{
+    width: 270px;
+    margin: 0 0 22px 0;
+}
+#search {
+    width: 670px;
+    overflow: hidden;
+    margin: 0 auto;
+
+}
+#search div:first-child input{
+
+    width: 540px;
+    height: 30px;
+    outline:none;
+    padding: 0 10px;
+}
+#search div:first-child{
+    position: relative;
+    float: left;
+    height: 124px;
+}
+#search div:first-child div{
+    position: absolute;
+    width: 560px;
+    top: 38px;
+    left: 0;
+    border: 1px solid #ccc;
+    border-top: 0;
+    display: none;
+
+}
+#search div:first-child ul{
+    list-style: none;
+    text-align: left;
+    padding-left: 10px;
+}
+
+#search span:last-child input{
+    float: left;
+    width: 100px;
+    height: 34px;
+    color: #ffffff;
+    cursor: pointer;
+    background: rgb(51,136,255);
+    border: none;
+    margin-left: -1px;
+}
+#search span:last-child input:hover{
+    background: #317ef3;
+     box-shadow: 1px 1px 1px #ccc;
+}
+#ewm{
+   margin: 100px 0 25px 0;
+}
+#ewm span{
+    font-size: 14px;
+    color: #0f0f0f;
+    font-weight: bold;
+
+}
+#aboutBaidu,#notice{
+    color: rgb(153,153,153);
+    font-size: 12px;
+}
+#aboutBaidu{
+    padding-bottom: 6px;
+}
+#notice{
+    margin-bottom: 30px;
+}
+#aboutBaidu a,#notice a{
+    color: rgb(153,153,153);
+
+}
+#aboutBaidu a{
+    margin: 0 10px 0 10px;
+}
+#notice a:nth-child(6){
+    margin-left: 16px;
+}
+#notice i{
+    width: 14px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: middle;
+}
+#notice i:nth-child(5){
+    background: url("../img/icons_5859e57.png") no-repeat -600px -96px;
+}
+#notice i:nth-child(7){
+    background: url("../img/icons_5859e57.png") no-repeat -623px -96px;
+}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/baiduFirst.css">
+</head>
+<body>
+<nav id="nav">
+    <div>更多产品</div>
+    <ul>
+        <li><a href="#">新闻</a></li>
+        <li><a href="#">hao123</a></li>
+        <li><a href="#">地图</a></li>
+        <li><a href="#">视频</a></li>
+        <li><a href="#">贴吧</a></li>
+        <li><a href="#">学术</a></li>
+        <li><a href="#">登录</a></li>
+        <li><a href="#">设置</a></li>
+    </ul>
+
+</nav>
+<div id="baiduImg"><img src="img/bd_logo1.png" alt=""></div>
+<div id="search">
+    <div>
+        <input type="text" id="input">
+        <div id="content">
+            <ul></ul>
+        </div>
+    </div>
+    <span><input type="button" value="百度一下" id="btn"></span>
+</div>
+<div id="ewm">
+    <img src="img/zbios_efde696.png" alt=""><br>
+    <span>手机百度</span>
+</div>
+<div id="aboutBaidu">
+    <a href="#">把百度设为主页</a>
+    <a href="#">关于百度</a>
+    <a href="#">About Baidu</a>
+    <a href="#">百度推广</a>
+</div>
+<div id="notice">
+    <span>©2017 Baidu </span>
+    <a href="">使用百度前必读</a>
+    <a href="">意见反馈</a>
+    <span>京ICP证030173号</span>
+    <i></i>
+    <a href="">京公网安备11000002000001号</a>
+    <i></i>
+</div>
+<script src="js/jquery-2.1.4.min.js"></script>
+<script>
+    $(function () {
+        function abc(data) {
+//            console.log('=======abc==',data);
+        }
+
+        var currentVal = '';//当前文本框的值
+        //输入框聚焦时边框颜色改变
+        $("#input").focus(function () {
+            $(this).css({"border": "1px solid #317ef3","height": "32px"});
+        });
+        //输入框失焦时边框颜色改变为原来颜色，下拉框隐藏
+        $("#input").blur(function () {
+            $(this).css({"border": "1px solid #ccc"});
+//            $("#content").hide();
+        });
+        //输入框输入时，请求数据,并把结果放在输入框下面
+        $("#input").keyup(function (e) {
+            if(e.keyCode == 40 || e.keyCode == 38){
+                //按下上下键的时候不需要查询数据
+                return;
+            }
+            var val = $(this).val();
+            currentVal = val;
+            $.ajax({
+                url: 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=' + val,
+                type: 'get',
+                dataType: 'jsonp',
+                jsonp: 'cb',// 在一个jsonp请求中重写回调函数的名字。这个值用来替代在"callback=?"这种GET或POST请求中URL参数里的"callback"部分，比如{jsonp:'onJsonPLoad'}会导致将"onJsonPLoad=?"传给服务器。
+                success: function (data) {
+                    var tmp = '';
+                    for (var i = 0; i < Math.min(data.s.length, 4); i++) {
+                        tmp += '<li>' + data.s[i] + '</li>';
+                    }
+                    $("#content ul").html(tmp);
+                    if (tmp) {
+                        $("#content").show()
+                    } else {
+                        $("#content").hide()
+                    }
+
+                }
+            })
+        });
+//监听输入框输入数据后键盘的上键与下键的keydown事件
+        var index = -1;
+        //下拉框里面li的hover事件,用到了时间委托
+        $("#input").keydown(function (e) {
+            if(e.keyCode == 40 || e.keyCode == 38){
+                var liArray = $('#content ul li');
+                if(e.keyCode == 40){//down键
+                    index ++;
+                }
+                if(e.keyCode == 38){//up键
+                    index --;
+                }
+                liArray.css({'background':'#fff'});
+
+                if(index == liArray.length){
+                    //设置初始值
+                    index = -1;
+                }
+                if(index < -1){
+                    index = liArray.length - 1;
+                }
+                if(index >= 0 && index <= liArray.length -1){
+                    liArray.eq(index).css({'background':'#ccc'});
+                    $('#input').val(liArray.eq(index).text());
+                }else {
+                    //不在0 - li长度范围内
+                    $('#input').val(currentVal);
+                }
+
+            }
+            if(e.keyCode == 13){
+                search();
+            }
+        });
+        function search() {
+            var val = $('#input').val();
+            if(val){
+                //打开新窗口
+                window.open('https://www.baidu.com/s?wd='+val, '_bank');
+            }
+        }
+
+        $("#content ul").on('mouseover', 'li', function () {
+            $(this).css({background: '#EBEBEB'})
+        }).on('mouseout', 'li', function () {
+            $(this).css({background: '#fff'})
+        });
+        //下拉框里面li的点击事件，事件委托
+        $("#content ul").on('click', "li", function () {
+            $("#input").val($(this).text());
+            search();
+        });
+
+        $("#btn").click(search);
+    });
+</script>
+</body>
+</html>
