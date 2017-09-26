@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{margin: 0;padding:0}
+        span{color: red;}
+        .success{border:1px solid green;}
+        .fail{border:1px solid red;}
+    </style>
+</head>
+<body>
+<input type="text" placeholder="8位以上字母数字下划线" id="user"><span></span><br>
+<input type="password" placeholder="6位数字密码" id="password"><span></span><br>
+<textarea id="meg">10以上字符</textarea><span></span><br>
+<script>
+    var user = document.getElementById('user');
+    var password = document.getElementById('password');
+    var meg = document.getElementById('meg');
+    user.onblur = function () {
+        var value = user.value;
+        if(/\w{8,}/.test(value)){
+            user.className = 'success';
+            user.nextSibling.innerHTML = '';
+        }else{
+            user.className = 'fail';
+            user.nextSibling.innerHTML = '用户名输入错误';
+        }
+    };
+
+    password.onblur = function () {
+        var value = password.value;
+        if(/^\d{6}$/.test(value)){
+            password.className = 'success';
+            password.nextSibling.innerHTML = '';
+        }else{
+            password.className = 'fail';
+            password.nextSibling.innerHTML = '密码必须为6位数字';
+        }
+    };
+
+    meg.onblur = function () {
+        var value = meg.value;
+        if(/\w{10,}/.test(value)){
+            meg.className = 'success';
+            meg.nextSibling.innerHTML = '';
+        }else{
+            meg.className = 'fail';
+            meg.nextSibling.innerHTML = '请输入10个以上字符';
+        }
+    }
+    /**
+     * 校验:用户名 密码 重复密码 邮箱 省份证
+     *
+     * */
+</script>
+</body>
+</html>

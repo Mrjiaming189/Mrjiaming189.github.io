@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{margin: 0;padding: 0;}
+        #waterfall ul{list-style: none;width: 1072px;margin: 0 auto;overflow: hidden;}
+        #waterfall ul li{float: left;padding: 5px;}
+        #waterfall ul li .item{border:1px solid #ddd;box-shadow: 0 3px 5px #ddd;}
+        #waterfall ul li .item img{margin: 10px;}
+    </style>
+</head>
+<body>
+<div id="waterfall">
+    <ul>
+  <!--      <li>
+            <div class="item">
+                <img src="imgs/i1.jpg" alt="">
+            </div>
+        </li>
+        <li>
+            <div class="item">
+                <img src="imgs/i2.jpg" alt="">
+            </div>
+
+        </li>
+        <li>
+            <div class="item">
+                <img src="imgs/i3.jpg" alt="">
+            </div>
+        </li>
+        <li>
+            <div class="item">
+                <img src="imgs/i4.jpg" alt="">
+            </div>
+        </li>-->
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+<script>
+    /**
+     * 瀑布流:
+     * 1> 如果计算那个li高度最小!!! for循环+数组
+     *
+     * */
+    window.onload = function () {
+        var lis = document.getElementsByTagName('li');//获取所有的li
+ /*       var li_height = [];//放置每一个li的高度
+        for (var i = 0; i < lis.length; i++) {
+            //var obj = lis[i];
+            //console.log(obj.offsetHeight);
+            li_height.push(lis[i].offsetHeight);
+        }
+        console.log(li_height);//
+        var min_height = Math.min.apply(null,li_height);//拿出最小高度
+        console.log(min_height);
+        var index = li_height.indexOf(min_height);//获取元素在数组中的索引
+        console.log(index);
+        console.log(lis[index]);*/
+        /***
+         * fn: 获取高度最小的li
+         * */
+        function minLi(){
+            var li_height = [];//放置每一个li的高度
+            for (var i = 0; i < lis.length; i++) {
+                li_height.push(lis[i].offsetHeight);
+            }
+            var min_height = Math.min.apply(null,li_height);//拿出最小高度
+            var index = li_height.indexOf(min_height);//获取元素在数组中的索引
+            return lis[index];
+        }
+        //循环往最小的li里,放置图片
+        for (var i = 1; i <= 15; i++) {
+            var li = minLi();//得到最小的li
+            /*
+             <div class="item">
+             <img src="imgs/i1.jpg" alt="">
+             </div>
+            * */
+            //拼接新元素
+            var str = '<div class="item"><img src="imgs/i'+i+'.jpg" alt=""></div>';
+            li.innerHTML += str;//把新元素放入li中
+        }
+        /**
+         * 无限加载
+         * document.body.offsetHeight: 页面高度
+         * window.pageYOffset: 页面滚动的距离
+         * window.innerHeight: 浏览器高度
+         * 等式关系: 页面高度 >= 页面滚动的距离 + 浏览器高度
+         * 滚动事件: onscroll
+         * */
+        var index = 1;
+        window.onscroll = function(){
+            if(document.body.offsetHeight-(window.pageYOffset+window.innerHeight)<=200){
+                var li = minLi();//得到最小的li
+                //拼接新元素
+                var str = '<div class="item"><img src="imgs/i'+index+'.jpg" alt=""></div>';
+                li.innerHTML += str;//把新元素放入li中
+                index ++;
+                if(index == 16){
+                    index = 1;
+                }
+            }
+        };
+    };
+</script>
+</body>
+</html>

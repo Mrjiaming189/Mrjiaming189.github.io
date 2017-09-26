@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>返回顶部</title>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        img {
+            position: fixed;
+            bottom: 50px;
+            right: 50px;
+            cursor: pointer;
+        }
+        body {
+            background: linear-gradient(red, yellow, green);
+            height: 3000px;
+        }
+    </style>
+</head>
+<body>
+<img src="img/up.png" alt="" width="100px">
+
+<script>
+    $('img').click(function () {
+        $('html,body').animate({
+            scrollTop: 0
+        }, 500);
+    });
+    //监听滚动条滑动
+    $(window).scroll(function(){
+        init();
+    });
+    //初始化
+    function init(){
+        var topHeight = $(window).scrollTop();//获取滚动条滚动的距离
+        //console.log(topHeight);
+        if (topHeight<100) {
+            $('img').hide();//隐藏图片
+        }else {
+            $('img').show();//显示图片
+        }
+    }
+    init();
+</script>
+</body>
+</html>

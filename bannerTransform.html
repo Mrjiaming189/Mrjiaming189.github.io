@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>banner</title>
+    <style>
+        *{
+            margin:0;
+            padding: 0;
+        }
+        #banner{
+            width: 790px;
+            height: 340px;
+            margin: 100px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        #img img{
+            position: absolute;
+            top:0;
+            left:0;
+            opacity: 0;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+        #img img.active{
+            z-index: 2 !important;
+            opacity: 1 !important;
+        }
+
+        #number ul{
+            list-style: none;
+            position: absolute;
+            bottom: 20px;
+            left:320px;
+            width: 150px;
+            background: rgba(255,255,255,.3);
+            padding: 5px;
+            border-radius: 30px;
+            text-align: center;
+            margin: 0 auto;
+            z-index: 3;
+        }
+        #number ul li{
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            border-radius: 10px;
+            background: #fff;
+            color: #f40;
+            cursor: pointer;
+        }
+        /*#number ul li:hover {*/
+            /*background: #f40;*/
+            /*color: #fff;*/
+        /*}*/
+        #number ul li.on{
+            background: #f40 !important;
+            color: #fff !important;
+        }
+        #banner .prev,.next{
+            width: 30px;
+            height: 50px;
+            background: rgba(0,0,0,.3);
+            color: #fff;
+            font-size: 30px;
+            font-family: "宋体";
+            text-align: center;
+            line-height: 50px;
+            position: absolute;
+            display: none;
+            cursor: pointer;
+            z-index: 3;
+        }
+        #banner .prev{
+            top:145px;
+            left:0;
+        }
+        #banner .next{
+            top:145px;
+            right:0;
+        }
+        /*hover后面要加空格才有效*/
+        #banner:hover .prev{
+            display: block;
+        }
+        #banner:hover .next{
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="banner">
+       <div id="img">
+           <img src="img/j1.jpg" alt="" class="active">
+           <img src="img/j2.jpg" alt="">
+           <img src="img/j3.jpg" alt="">
+           <img src="img/j4.jpg" alt="">
+       </div>
+        <div id="number">
+            <ul>
+                <li class="on">1</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+            </ul>
+        </div>
+        <div class="prev"> < </div>
+        <div class="next"> > </div>
+    </div>
+    <script>
+        var img = document.getElementsByTagName("img");
+        var numberList = document.getElementsByTagName("li");
+        for (var i = 0; i < numberList.length; i++) {
+            numberList[i].onclick = function () {
+                for (var i = 0; i < img.length; i++) {
+                    img[i].className = "";
+                    numberList[i].className = "";
+                }
+                var index = this.innerHTML-1;
+                img[index].className = "active";
+                this.className = "on"
+            }
+        }
+        //下一页
+        document.getElementsByClassName("next")[0].onclick = function () {
+          var  currentPage = document.getElementsByClassName("on")[0];
+            if(currentPage.nextElementSibling){
+                currentPage.nextElementSibling.onclick();
+            }else{
+                numberList[0].onclick();
+            }
+        };
+        //上一页
+        document.getElementsByClassName("prev")[0].onclick = function () {
+          var  currentPage = document.getElementsByClassName("on")[0];
+            if(currentPage.previousElementSibling){
+                currentPage.previousElementSibling.onclick();
+            }else{
+                numberList[numberList.length-1].onclick();
+            }
+        };
+        //自动播放
+        setInterval(function () {
+            document.getElementsByClassName("next")[0].onclick();
+        },1000);
+        //笨方法！
+//        var i=0;
+//        setInterval(function () {
+//            numberList[i].onclick();
+//            i++;
+//            if(i==4){
+//                i=0;
+//            }
+//        },1000)
+    </script>
+</body>
+</html>

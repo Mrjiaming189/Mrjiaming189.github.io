@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>搜索栏固定</title>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <style>
+        *{margin: 0; padding: 0;font-size: 0;}
+        .nav{height: 73px;}
+        .static{position: fixed;top:0;box-shadow: 0 0 10px #000;}
+    </style>
+</head>
+<body>
+<img src="img/01.png" alt="">
+<div class="nav">
+    <img src="img/02.png" alt="" id="search">
+</div>
+<img src="img/03.png" alt="">
+<img src="img/04.png" alt="">
+
+<script>
+    window.onscroll = function(){
+        //获取滚动条距离顶部的高度
+        var top = $(window).scrollTop();
+        //获取要固定的元素的实际top值
+        var _top = $('.nav').offset().top;
+        //如果滚动条高度大于要固定元素的高度,就让他固定起来,脱离文档流
+        //否则继续在文档流里
+        if(top>=_top){
+            $('#search').addClass('static');
+        }else{
+            $('#search').removeClass('static');
+        }
+    }
+</script>
+</body>
+</html>
