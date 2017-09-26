@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body{
+            background: rgb(247,247,247);
+            overflow: hidden;
+        }
+        .snow{
+            font-size: 40px;
+            color: pink;
+            position: absolute;
+            animation: snow 2s linear infinite;
+        }
+        .snow1{
+            animation-name: snow_rotate;
+            top:0;
+            left:100px;
+        }
+        .snow2{
+            animation-name: snow_rotateX;
+            top:0;
+            left:200px;
+        }
+        .snow3{
+            animation-name: snow_rotateY;
+            top:0;
+            left:400px;
+        }
+        @keyframes snow_rotate{
+                from{transform: rotate(0deg)}
+                to{transform: rotate(360deg)}
+        }
+        @keyframes snow_rotateX {
+                from{transform: rotateX(0deg)}
+                to{transform: rotateX(360deg)}
+        }
+        @keyframes snow_rotateY {
+                from{transform: rotateY(0deg)}
+                to{transform: rotateY(360deg)}
+        }
+    </style>
+</head>
+<body>
+<!--<div class="snow snow1">❉</div>-->
+<!--<div class="snow snow2">❉</div>-->
+<!--<div class="snow snow3">❉</div>-->
+
+<script>
+
+
+    function Snow(color,fontSize,snowTop,left,animationName) {
+        this.color = color;
+        this.fontSize = fontSize+"px";
+        this.top = snowTop+"px";
+        this.left = left+"px";
+        this.animationName = animationName;
+    }
+    Snow.prototype.show = function () {
+        var snow = document.createElement("div");
+       snow.className = "snow "+this.animationName;
+        snow.innerHTML = "❉";
+        snow.style.top = this.top;
+        snow.style.left = this.left;
+        snow.style.fontSize = this.fontSize;
+        snow.style.color = this.color;
+        document.body.appendChild(snow)
+    };
+    for (var i = 0; i < 100; i++) {
+        var left = Math.random()*window.innerWidth;
+        var snowTop = Math.random()*600;
+        var color = "rgb("+parseInt((Math.random()*255))+","+parseInt((Math.random()*255))+","+parseInt((Math.random()*255))+")";
+         var fontSize = Math.random()*48+12;
+         var animationName = "snow"+parseInt(Math.random()*3+1);
+         new Snow(color,fontSize,snowTop,left,animationName).show();
+    }
+    var snowArr = document.getElementsByClassName("snow");
+    setInterval(function () {
+        for (var i = 0; i < snowArr.length; i++) {
+            var snow = snowArr[i];
+            var snowTop = snow.offsetTop;
+//            console.log("偏移量："+snowTop);
+            snow.style.top = (snowTop+Math.random()*3+1)+"px";
+            var height = window.innerHeight;
+//            console.log('浏览器高度：'+height);
+            if(snowTop>height){
+//                document.body.removeChild(snow)
+                snow.style.top = (Math.random()*9+1)+"px";
+            }
+        }
+    },50);
+</script>
+
+</body>
+</html>

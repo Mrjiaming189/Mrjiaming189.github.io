@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: rgb(238, 238, 238);
+        }
+
+        ul {
+            list-style: none;
+            font-size: 0;
+        }
+
+        li {
+            display: inline-block;
+        }
+
+        #tab {
+            width: 300px;
+            height: 100px;
+            background: #fff;
+            margin: 15px auto auto 15px;
+        }
+
+        #title ul li {
+            font-size: 12px;
+            padding: 5px 18px;
+            cursor: pointer;
+        }
+
+        #title ul li:hover {
+            color: orange;
+        }
+
+        #title ul li#title1 {
+            border-bottom: 2px solid orange;
+            font-weight: bold;
+
+        }
+
+        #content {
+            font-size: 0;
+            height: 72px;
+        }
+
+        #content div:not(.first-con) {
+            display: none;
+        }
+
+        #content ul {
+            padding: 8px 0;
+        }
+
+        #content ul li {
+            font-size: 10px;
+            width: 120px;
+            /*height: 30px;*/
+            padding: 6px 15px;
+
+        }
+    </style>
+</head>
+<body>
+<div id="tab">
+    <div id="title">
+        <ul>
+            <li class="title-con" id="title1">公告</li>
+            <li class="title-con" id="title2">规则</li>
+            <li class="title-con" id="title3">论坛</li>
+            <li class="title-con" id="title4">安全</li>
+            <li class="title-con" id="title5">公益</li>
+        </ul>
+    </div>
+    <div id="content">
+        <div class="first-con" id="conttitle1">
+            <ul>
+                <li>淘宝招募卖家志愿者</li>
+                <li>淘宝招募卖家志愿者</li>
+                <li>淘宝招募卖家志愿者</li>
+                <li>淘宝招募卖家志愿者</li>
+            </ul>
+        </div>
+        <div id="conttitle2">
+            <ul>
+                <li>阿里推出兼职神器</li>
+                <li>阿里推出兼职神器</li>
+                <li>阿里推出兼职神器</li>
+                <li>阿里推出兼职神器</li>
+            </ul>
+        </div>
+        <div id="conttitle3">
+            <ul>
+                <li>700家热风淘宝路</li>
+                <li>700家热风淘宝路</li>
+                <li>700家热风淘宝路</li>
+                <li>700家热风淘宝路</li>
+            </ul>
+        </div>
+        <div id="conttitle4">
+            <ul>
+                <li>是赚钱还是骗子</li>
+                <li>是赚钱还是骗子</li>
+                <li>是赚钱还是骗子</li>
+                <li>是赚钱还是骗子</li>
+            </ul>
+        </div>
+        <div id="conttitle5">
+            <ul>
+                <li>淘宝用户必备神器</li>
+                <li>淘宝用户必备神器</li>
+                <li>淘宝用户必备神器</li>
+                <li>淘宝用户必备神器</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    function clickTitle(event) {
+        //title边框显示
+        //div 显示
+        var id = this.getAttribute("id");
+        var div = document.getElementById("cont" + id);
+        for (var j = 1; j <= 5; j++) {
+            var div2 = document.getElementById("conttitle" + j);
+            var div3 = document.getElementById("title" + j);
+            div3.style.borderBottom = "none";
+            div3.style.fontWeight = "normal";
+            div2.style.display = "none";
+        }
+        div.style.display = "block";
+        this.style.borderBottom = " 2px solid orange ";
+        this.style.fontWeight = "bold";
+    }
+    var titleCon = document.getElementsByClassName("title-con");
+    for (var i = 0; i < titleCon.length; i++) {
+        var obj = titleCon[i];
+        obj.onclick = clickTitle;
+    }
+    var k = 1;
+    setInterval(function () {
+        var title = document.getElementById("title"+k);
+        title.click();
+        if(k>=5){
+            k=0;
+        }
+        k++;
+
+    },1000);
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{margin: 0;padding: 0}
+        #small{
+            position: relative;
+            width: 400px;
+            height: 267px;
+            overflow: hidden;
+            float: left;
+        }
+        #area{
+            width: 80px;
+            height: 60px;
+            background: rgba(255,0,0,0.5);
+            position: absolute;
+            left: 0;
+            top: 0;
+            cursor: move;
+            display: none;
+        }
+        #big{
+            width: 800px;
+            height: 533px;
+            overflow: hidden;
+            float: left;
+        }
+        #big >img{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="small">
+    <img src="gu.jpg" alt="" width="400">
+    <div id="area"></div>
+</div>
+<div id="big">
+    <img src="gu.jpg" alt="" id="origin" width="1600">
+</div>
+<script>
+    var small = document.getElementById('small');
+    var area = document.getElementById('area');
+    var origin = document.getElementById('origin');
+    small.onmousemove = function (e) {
+        //console.log(e.pageX);
+        //判断区域,不让滑块出去
+        var left = 0;
+        var top = 0;
+        if(e.pageX-40<0){
+            left = 0;
+        }else if(e.pageX-40>400-80){
+            left = 320;
+        }else{
+            left = e.pageX-40;
+        }
+
+        if(e.pageY-30<0){
+            top = 0;
+        }else if(e.pageY-30>267-60){
+            top = 207;
+        }else{
+            top = e.pageY-30;
+        }
+
+        area.style.left = left+'px';//为了鼠标居中
+        area.style.top = top+'px';
+
+        origin.style.marginLeft = -2*e.pageX+'px';
+        origin.style.marginTop = -2*e.pageY+'px';
+    };
+
+    small.onmouseover = function () {
+        area.style.display = 'block';
+        origin.style.display = 'block';
+    };
+    small.onmouseout = function () {
+        area.style.display = 'none';
+        origin.style.display = 'none';
+    };
+</script>
+</body>
+</html>

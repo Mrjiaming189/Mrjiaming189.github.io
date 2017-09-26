@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #clock{
+            margin: 5% auto;
+            width: 400px;
+            height: 400px;
+            border-radius: 10px;
+            background: #aaa;
+            position: relative;
+            transform: rotate(-90deg);
+        }
+        #clock .bg{
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            background: #fff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -180px;
+            margin-top: -180px;
+        }
+        #clock .point{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -14px;
+            margin-top: -14px;
+        }
+        #clock #hour{
+            width: 80px;
+            height: 16px;
+            background: #000;
+            margin: 6px 0 0 14px;
+            /*transform: rotate(30deg);*/
+            transform-origin:0 8px;
+            /*animation: hour 3s linear 100!* alternate*!;*/
+            border-radius: 16px;
+        }
+
+        #clock #minute{
+            width: 120px;
+            height: 12px;
+            background: #000;
+            margin: -14px 0 0 14px;
+            transform-origin:0 6px;
+            border-radius: 12px;
+        }
+        #clock #second{
+            width: 160px;
+            height: 6px;
+            background: #f00;
+            margin: -9px 0 0 14px;
+            transform-origin:0 3px;
+            border-radius: 6px;
+        }
+        #clock .point .circle{
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #000;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        #clock .number{
+            position: absolute;
+            font-size: 34px;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+           transform: rotate(90deg);
+        }
+
+        @keyframes hour {
+            from {transform: rotate(0deg);}
+            to {transform: rotate(360deg);}
+        }
+    </style>
+</head>
+<body>
+<div id="clock">
+    <div class="bg">
+        <div class="point">
+            <div id="hour"></div>
+            <div id="minute"></div>
+            <div id="second"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+</div>
+<script>
+    /***
+     * 时钟:
+     * 1. 指针走动
+     * */
+    var hour = document.getElementById('hour');
+    var minute = document.getElementById('minute');
+    var second = document.getElementById('second');
+
+    //获取真实时间
+    var now = new Date();
+/*    console.log(now.getHours());
+    console.log(now.getMinutes());
+    console.log(now.getSeconds());*/
+
+    var count_second = (now.getSeconds()/60)*360;
+    var count_minute = (now.getMinutes()/60)*360;
+    var count_hour = (now.getHours()/12)*360;
+    //初始化时间显示
+    second.style.transform='rotate('+count_second+'deg)';
+    minute.style.transform='rotate('+count_minute+'deg)';
+    hour.style.transform='rotate('+count_hour+'deg)';
+
+    //画表盘
+    /***
+     * 圆半径坐标计算：
+     * x = pointX + r*cos(angle);
+     * y = pointY + r*sin(angle);
+     * */
+    var pointX = 200;
+    var pointY = 200;
+    var r = 150;
+    var clock = document.getElementById('clock');
+
+    for (var i = 1; i <=12; i++) {
+        var number = document.createElement('div');
+        number.className = 'number';
+        number.innerHTML = i;
+        var angle = ((2*Math.PI)/12)*i;//算角度
+        number.style.left = pointX-25 + r*Math.cos(angle) +'px';
+        number.style.top = pointY-25 + r*Math.sin(angle) +'px';
+        //div添加元素
+        clock.appendChild(number);
+    }
+
+    //定时器:
+    setInterval(function () {
+        count_second += 6;//秒针每次走6°
+        if(count_second == 360){
+            count_second = 0;
+            count_minute += 6;//分针每次走6°
+        }
+        if(count_minute == 360){
+            count_minute = 0;
+            count_hour += 30;//时针每次走30°
+        }
+        if(count_hour == 360){
+            count_hour = 0;
+        }
+        second.style.transform='rotate('+count_second+'deg)';
+        minute.style.transform='rotate('+count_minute+'deg)';
+        hour.style.transform='rotate('+count_hour+'deg)';
+    },1000);
+
+</script>
+</body>
+</html>
