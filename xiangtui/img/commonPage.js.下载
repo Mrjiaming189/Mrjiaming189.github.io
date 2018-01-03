@@ -1,0 +1,230 @@
+$(document).ready(function(){
+    //返回顶部特效
+    $(".btnTop").click(function(){
+        $("html,body").animate({scrollTop:0},600);
+    });
+
+    //右侧悬浮菜单电话及二维码展示效果
+    $(".rtNavFixed .btnkf .liBox").hover(function(){
+        $(this).parent().find(".telBox").toggleClass("cur");
+    });
+    $(".rtNavFixed .btnCode .liBox").hover(function(){
+        $(this).parent().find(".codeBox").toggleClass("cur");
+    });
+
+    // 登录弹窗
+  $(".businessBtn").on("click",function () {
+      $.ajax({
+          url: '/mgr/chklogin',
+          type: 'post',
+          dataType: 'json',
+          success: function (data) {
+              if (data.success) {
+                  location.href = "/mgr/";
+              } else {
+                  $.ajax({
+                      url: '/login',
+                      type: 'post',
+                      dataType: 'text',
+                      success: function (data) {
+                          $(".maskBlack").show();
+                          $(".login_box").show();
+                      }
+                  });
+              }
+          }
+      });
+    });
+
+
+    $(".login_box .login_body .login_title span").click(function() {
+        $(this).addClass("current").siblings().removeClass("current");
+        $(".login_box .login_account").hide().eq($(this).index()).show();
+    });
+
+    //关闭登录弹窗
+    $(".closeBox").on("click",function () {
+        $(this).parent().hide();
+        $(".maskBlack").hide();
+    });
+
+    //登录弹窗眼睛效果
+    var flag=true;
+    $(".login_box .login_account i.icon_eye").on("click",function () {
+        if(flag){
+            $(".login_box .login_account .psw").attr("type","text");
+            flag=false;
+            $(".login_box .login_account i.icon_eye").addClass("icon_eye_close")
+        }else{
+            $(".login_box .login_account .psw").attr("type","password");
+            flag=true;
+            $(".login_box .login_account i.icon_eye").removeClass("icon_eye_close")
+        }
+    });
+
+    //首页眼睛特效
+    var fag=true;
+    $(".formsum i.icon_eye").on("click",function () {
+        if(fag){
+            $(".formsum .psw").attr("type","text");
+            fag=false;
+            $(".formsum i.icon_eye").addClass("icon_eye_close")
+        }else{
+            $(".formsum .psw").attr("type","password");
+            fag=true;
+            $(".formsum i.icon_eye").removeClass("icon_eye_close")
+        }
+    });
+
+    //注册弹窗眼睛特效
+    var fg=true;
+    $(".regist_box .login_account i.icon_eye").on("click",function () {
+        if(fg){
+            $(".regist_box .login_account .psw").attr("type","text");
+            fg=false;
+            $(".regist_box .login_account i.icon_eye").addClass("icon_eye_close")
+        }else{
+            $(".regist_box .login_account .psw").attr("type","password");
+            fg=true;
+            $(".regist_box .login_account i.icon_eye").removeClass("icon_eye_close")
+        }
+    });
+
+    //正式注册协议
+    if ($(".service_add input").is(':checked')==true) {
+        $(".login_go").removeAttr("disabled").removeClass("login_not");
+    }else{
+        $(".login_go").attr("disabled",true).addClass("login_not") ;
+    }
+    $(".service_add input").on("click",function () {
+        if ($(".service_add input").is(':checked')==true) {
+            $(".login_go").removeAttr("disabled").removeClass("login_not");
+        }else{
+            $(".login_go").attr("disabled",true).addClass("login_not") ;
+        }
+    });
+
+    //头部导航切换
+    $(window).scroll(function() {
+        var headerTop = parseInt($(window).scrollTop());
+        if (headerTop > 100) {
+            $(".headerBox").css("display","none");
+            $(".headerBoxSmall").css("display","block");
+            $(".main").css("padding-top","69px")
+        }else{
+            $(".headerBox").css("display","block");
+            $(".headerBoxSmall").css("display","none");
+            $(".main").css("padding-top","100px")
+        }
+        //返回顶部按钮显示隐藏
+        if(headerTop>250){
+            $(".rtNavFixed").css("display","block");
+        }else{
+            $(".rtNavFixed").css("display","none");
+        }
+    });
+
+    //滑块显示
+    $("#dragBox").drag();
+    $(".formsum .drag_box").drag();
+    $(".login_box .drag_box").drag();
+
+    //登录弹窗点击下面的注册，弹窗切换
+    $(".login_box .login_foot span").on("click",function () {
+        $(".login_box").hide();
+        $(".maskBlack").show();
+        $('.new_register_form #tel').val('');
+        $(".regist_box").show();
+    });
+    $(".regist_box .login_foot span").on("click",function () {
+        $(".regist_box").hide();
+        $(".maskBlack").show();
+        $(".login_box").show();
+    });
+
+});
+
+//滑动插件js
+$.fn.drag = function(options){
+    var x, drag = this, isMove = false;
+    var dragBtn = drag.find('.dragBtn');
+    var dragGreen = drag.find('.dragGreen');
+    var text = drag.find('.dragText');
+    //var maxWidth = drag.width() - dragBtn.width();  //能滑动的最大间距
+    //var maxWidth = $(".dragBox").width() - $(".dragBtn").width();
+    var maxWidth = 302;
+    //console.log($(".dragBox").width());
+
+    //鼠标按下时候的x轴的位置
+    dragBtn.mousedown(function(e){
+        isMove = true;
+        x = e.pageX - parseInt(dragBtn.css('left'), 10);
+    });
+
+    //鼠标指针在上下文移动时，移动距离大于0小于最大间距，滑块x轴位置等于鼠标移动距离
+    $(document).mousemove(function(e){
+        var _x = e.pageX - x;
+        if(isMove){
+            if(_x > 0 && _x <= maxWidth){
+                dragBtn.css({'left': _x});
+                dragGreen.css({'width': _x});
+            }else if(_x > maxWidth){  //鼠标指针移动距离达到最大时清空事件
+                dragOk();
+            }
+        }
+    }).mouseup(function(e){
+        isMove = false;
+        var _x = e.pageX - x;
+        if(_x < maxWidth){ //鼠标松开时，如果没有达到最大距离位置，滑块就返回初始位置
+            //dragBtn.css({'left': 0});
+            //dragGreen.css({'width': 0});
+            dragBtn.animate({left:"0"},400);
+            dragGreen.animate({width:"0"},400)
+        }
+    });
+
+    //清空事件
+    function dragOk(){
+        dragBtn.addClass('dragBtnOk');
+        text.text('验证通过');
+        text.css({'color': '#fff'});
+        dragBtn.unbind('mousedown');
+        $(document).unbind('mousemove');
+        $(document).unbind('mouseup');
+    }
+};
+
+//发送密码倒计时
+var timer=60;
+function settime(val) {
+    $(".codemask").show();
+    window.setTimeout(function(){
+        $(".codemask").hide();
+    },3000);
+    var btn = $('.btnSMS');
+    if (timer == 0) {
+        val.removeAttribute("disabled");
+        val.value="发送短信验证码";
+        btn.removeClass('btnHui');
+        //btn.parents(".baseForm").next().addClass("dragBoxHide");
+        timer = 60;
+        return false;
+    } else {
+        val.setAttribute("disabled", true);
+        val.value=""+timer+"秒后重新获取";
+        btn.addClass('btnHui');
+        //btn.parents(".baseForm").next().removeClass("dragBoxHide");
+        timer--;
+    }
+    setTimeout(function() {
+        settime(val);
+    },1000);
+}
+
+
+
+
+
+
+
+

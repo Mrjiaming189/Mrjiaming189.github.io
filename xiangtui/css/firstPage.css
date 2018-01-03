@@ -1,0 +1,499 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+ul {
+    list-style: none
+}
+
+img {
+    vertical-align: middle
+}
+
+.fl {
+    float: left
+}
+
+.fr {
+    float: right
+}
+
+.fixed::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.center {
+    width: 1200px;
+    margin: 0 auto
+}
+
+.cover {
+    background: url("../img/cover.jpg") no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+/*轮播图1*/
+#banner .banner1, #banner .banner2 {
+    height: 700px;
+    width: 100%;
+    position: relative
+}
+
+#banner .banner1 {
+    background: url("../img/bannerBg2.jpg") no-repeat top center;
+}
+
+#banner .banner1 img {
+    position: absolute
+}
+
+#banner .banner1 img:nth-child(1) {
+    top: 150px;
+    left: 160px;
+}
+
+#banner .banner1 img:nth-child(2) {
+    top: 210px;
+    left: 406px;
+}
+
+#banner .banner1 img:nth-child(3) {
+    top: 446px;
+    left: 430px;
+}
+
+#banner .banner1 img:nth-child(4) {
+    top: 516px;
+    left: 436px;
+}
+
+/*轮播图2*/
+#banner .banner2 {
+    background: url("../img/centerpic.jpg") no-repeat top center;
+}
+
+#banner .banner2 img, #banner .banner2 div {
+    position: absolute
+}
+
+#banner .banner2 img:nth-child(1) {
+    top: 62px;
+    left: 108px;
+}
+
+#banner .banner2 img:nth-child(2) {
+    top: 82px;
+    left: 450px;
+}
+
+#banner .banner2 img:nth-child(3) {
+    top: 200px;
+    left: 450px;
+}
+
+#banner .banner2 div:nth-child(4) {
+    top: 466px;
+    left: 30px;
+    background: url("../img/peo1.png") no-repeat left center;
+}
+
+#banner .banner2 div:nth-child(5) {
+    top: 470px;
+    left: 468px;
+    background: url("../img/peo2.png") no-repeat left center;
+}
+
+#banner .banner2 div:nth-child(6) {
+    top: 550px;
+    left: 646px;
+    background: url("../img/peo3.png") no-repeat left center;
+}
+
+#banner .banner2 div span {
+    font-size: 22px;
+    color: #ffffff
+}
+
+#banner .banner2 div i.before {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: url("../img/icon_pc.png") no-repeat -64px 0
+}
+
+#banner .banner2 div i.after {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: url("../img/icon_pc.png") no-repeat -74px 0
+}
+
+/*我们目前所涉及的行业*/
+#involved .title {
+    text-align: center;
+    line-height: 48px;
+    padding: 60px 0 16px 0;
+    background: #fcfcfc;
+}
+
+#involved .content {
+    background: #2f323b
+}
+
+#involved .content ul li {
+    width: 300px;
+    height: 536px;
+    float: left;
+    position: relative;
+}
+
+#involved .content ul li:nth-child(1) {
+    background: url("../img/hight_cost.png") no-repeat top center;
+}
+
+#involved .content ul li:nth-child(2) {
+    background: url("../img/find_hard.png") no-repeat top center;
+}
+
+#involved .content ul li:nth-child(3) {
+    background: url("../img/more_1.png") no-repeat top center;
+}
+
+#involved .content ul li:nth-child(4) {
+    background: url("../img/no_resource.png") no-repeat top center;
+}
+
+#involved .content ul li div {
+    width: 300px;
+    height: 536px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+    color: #ffffff
+}
+
+#involved .content ul li a img {
+    width: 100px;
+    height: 100px;
+    margin-top: 96px
+}
+
+#involved .content ul li .hover-before {
+    background: rgba(0, 0, 0, .7);
+}
+
+#involved .content ul li .hover-before p {
+    font-size: 16px;
+    margin-top: 24px
+}
+
+#involved .content ul li .hover-after {
+    background: rgba(235, 136, 51, .6);
+}
+
+#involved .content ul li .hover-after a img {
+    margin-top: 68px
+}
+
+#involved .content ul li .hover-after p:nth-child(2) {
+    height: 60px;
+    line-height: 60px;
+    font-size: 20px
+}
+
+#involved .content ul li .hover-after p:nth-child(3) {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+#involved .content ul li .hover-after p:last-child {
+    font-size: 16px;
+    text-indent: 12px;
+    padding: 0 20px;
+    line-height: 28px
+}
+
+#involved .content ul li .hover-after {
+    display: none
+}
+
+#involved .content ul li:hover .hover-before {
+    display: none;
+    transition: all 1s
+}
+
+#involved .content ul li:hover .hover-after {
+    display: block;
+    transition: all 1s
+}
+
+/*他们有话说*/
+#say {
+    background: #f6f6f9;
+    height: 625px
+}
+
+#say .title {
+    text-align: center;
+    line-height: 48px;
+    padding: 60px 0 16px 0;
+}
+
+#say .content ul {
+    width: 1200px;
+    height: 448px;
+    position: relative;
+    overflow: hidden
+}
+
+#say .content ul li {
+    width: 700px;
+    height: 448px;
+    position: absolute;
+}
+
+#say .content ul li:nth-child(1) {
+    background: url("../img/tcly.jpg") no-repeat top left;
+    top: 0;
+    left: 0;
+}
+
+#say .content ul li:nth-child(2) {
+    background: url("../img/aidai.jpg") no-repeat top left;
+    top: 0;
+    left: 400px
+}
+
+#say .content ul li:nth-child(3) {
+    background: url("../img/jiaotong.jpg") no-repeat top left;
+    top: 0;
+    left: 800px;
+}
+
+#say .content ul li .hover-before {
+    width: 400px;
+    height: 448px;
+    background: rgba(178, 178, 178, .2);
+    text-align: center;
+    line-height: 448px;
+}
+
+#say .content ul li .hover-after {
+    width: 700px;
+    height: 390px;
+    background: rgba(235, 136, 51, .6);
+    font-size: 24px;
+    color: #fff;
+    margin-top: 448px;
+    padding: 98px 20px 62px 20px
+}
+
+#say .content ul li:hover .hover-after {
+    margin-top: 62px;
+}
+
+#say .content ul li:hover .hover-before {
+    display: none;
+}
+
+#say .content ul li .hover-after p {
+    padding: 0 24px;
+    line-height: 42px;
+}
+
+#say .content ul li .hover-after span {
+    display: block;
+    margin-left: 360px
+}
+
+#say .content ul li .hover-after img:nth-child(4) {
+    margin-left: 630px
+}
+
+/*陪伴他们一起成长*/
+#together {
+    background: rgba(125, 106, 108, .4)
+}
+
+#together .title {
+    text-align: center;
+    line-height: 48px;
+    padding: 60px 0 16px 0;
+    background: #fcfcfc;
+}
+
+#together .content {
+    height: 590px;
+}
+
+#together .content ul {
+    height: 346px;
+    width: 1008px;
+    margin: 164px auto
+}
+
+#together .content ul li {
+    height: 110px;
+    width: 1008px;
+    line-height: 110px;
+}
+
+#together .content ul li a {
+    height: 110px;
+    width: 200px;
+    float: left;
+    text-align: center;
+}
+
+#together .content ul li a img {
+    vertical-align: middle
+}
+
+#together .content ul li:nth-child(1) a {
+    border-right: 1px solid #d4d4d4;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+#together .content ul li:nth-child(1) a:last-child {
+    border-right: none
+}
+
+#together .content ul li:nth-child(2) a {
+    border-right: 1px solid #d4d4d4;
+}
+
+#together .content ul li:nth-child(2) a:last-child {
+    border-right: none;
+}
+
+#together .content ul li:nth-child(3) a {
+    border-right: 1px solid #d4d4d4;
+    border-top: 1px solid #d4d4d4;
+}
+
+#together .content ul li:nth-child(3) a:last-child {
+    border-right: none
+}
+
+/*合作企业数*/
+#enterprise {
+    height: 130px;
+    background: #fcfcfc;
+}
+
+#enterprise p {
+    text-align: center;
+    padding: 18px 0 30px 0;
+}
+
+#enterprise p .num {
+    color: #fe921f;
+    font-size: 70px;
+    font-weight: 900;
+    margin: 0 20px;
+    vertical-align: baseline
+}
+
+#enterprise p span:not(.num) {
+    font-size: 26px;
+    color: #363636;
+}
+
+/*!*返回顶部*!*/
+#aside {
+    position: fixed;
+    bottom: 0;
+    right: 10px;
+    z-index: 20
+}
+#aside ul{
+    width:132px ;
+
+}
+#aside ul li{position: relative;}
+#aside ul li .before {
+    width: 55px;
+    height: 55px;
+    margin: 0 auto 10px;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+    background: #fe921f;
+    transition: all 0.5s;
+}
+#aside ul li .before a {
+    width: 132px;
+    height: 55px;
+    line-height: 55px;
+    position: absolute;
+    right: 0;
+    text-align: right;
+    padding-right: 12px;
+    color: #fff;
+    text-decoration: none;
+}
+
+#aside ul li .before  a span {
+    display: inline-block;
+    width: 31px;
+    height: 33px;
+    vertical-align: middle;
+    margin-left: 14px;
+}
+
+#aside ul li:nth-child(1) span {
+    background: url("../img/icon_pc.png") no-repeat -123px 0;
+}
+
+#aside ul li:nth-child(2) span {
+    background: url("../img/icon_pc.png") no-repeat -153px 0;
+}
+
+#aside ul li:nth-child(3) span {
+    background: url("../img/icon_pc.png") no-repeat -183px 0;
+}
+
+#aside ul li:nth-child(4) span {
+    background: url("../img/icon_pc.png") no-repeat -213px 0;
+}
+
+#aside ul li:nth-child(2) .after {
+    position: absolute;
+    top: -80px;
+    left: -138px;
+}
+
+#aside ul li:nth-child(4) .after  {
+    position: absolute;
+    top: -90px;
+    left: -138px;
+    width: 132px;
+    height: 164px;
+    text-align: center;
+    background: #fff;
+}
+#aside ul li:nth-child(4) .after img{
+    width: 132px;
+    height: 132px;
+}
+#aside ul li .after{
+    display: none;
+}
+#aside ul li .before:hover{width: 132px;}
+#aside ul li:hover .after{display: block}
+
+
+
+
+
+
+
+
+
+
+

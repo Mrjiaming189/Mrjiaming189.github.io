@@ -1,0 +1,22 @@
+*{margin: 0;padding: 0;font-family: "Microsoft Yahei";box-sizing: border-box;}
+ul{ list-style: none}
+a{text-decoration: none; color: inherit;}
+.cont{width: 1200px; margin: 0 auto; overflow: hidden;}
+.lt{float: left}
+.rt{float: right}
+.o{overflow: hidden}
+img{vertical-align: middle;}
+.clear{clear:both;}
+/*首页*/
+.main{background: black;}
+.main .title{color: white;font-size: 12px;height:40px;line-height: 40px; }
+.vote .tag{margin: 65px 40px 104px 0;width: 600px;height: 560px;}
+.vote .title{margin-top: 102px;width: 528px;}
+.vote .title h2{font-size: 30px;margin-bottom: 40px;}
+.vote .title span{width:45px;height: 5px;display: block;background: #fe921f;margin-bottom: 10px;}
+.vote .title text{line-height: 25px;font-size: 12px;}
+.vote .title .text p{margin-bottom: 20px;}
+.vote .title .text .orange{color: #fe921f;font-weight: bold;}
+
+/*右侧悬浮菜单*/
+.navfixd{position: fixed;bottom: 2%;right: 0px;width: 132px;}

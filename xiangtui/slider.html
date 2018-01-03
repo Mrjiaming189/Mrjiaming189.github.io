@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{margin: 0;padding: 0;list-style: none;}
+        ul{
+            position: fixed;
+            bottom: 100px;
+            right: 100px;
+            border: 1px solid #000;
+            width: 120px;
+        }
+        li{
+            background: yellow;
+            color: #fff;
+            height: 50px;
+            position: relative;
+            width: 50px;
+            overflow: hidden;
+            margin: 0 auto;
+            transition: all 1s;
+        }
+        a{ position: absolute;right: 0;display: inline-block;width: 120px;}
+        span{
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: red;
+            margin: 10px;
+        }
+
+        li:hover{width: 120px;}
+    </style>
+</head>
+<body>
+
+<ul>
+    <li>
+        <a href="#">返回顶部 <span></span> </a>
+    </li>
+</ul>
+
+</body>
+</html>

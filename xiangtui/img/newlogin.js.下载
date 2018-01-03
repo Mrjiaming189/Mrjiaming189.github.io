@@ -1,0 +1,498 @@
+/**
+ * 登录
+ * Created by Shaowankai on 2016/11/30.
+ */
+var newlogin = function () {
+    var captchaObj1, captchaObj2;
+
+    var handlerLogin = function () {
+        $('.login_form').validate({
+            errorElement: 'span', // default input error message container
+            errorClass: 'error-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                name: {
+                    required: true
+                },
+                psw: {
+                    required: true,
+                    minlength: 6,
+                    maxlength: 22
+                },
+                remember: {
+                    required: false
+                }
+            },
+            messages: {
+                name: {
+                    required: '请输入账号'
+                },
+                psw: {
+                    required: '请输入密码',
+                    minlength: '密码必须在6-22位',
+                    maxlength: '密码必须在6-22位'
+                }
+            },
+
+            invalidHandler: function (event, validator) {
+
+            },
+
+            highlight: function (element) { // hightlight error inputs
+                $(element).closest('.basic_info').addClass('has-error');
+                $(element).closest('.basic_info').find(".check_login").show();
+            },
+
+            success: function (label) {
+                label.closest('.basic_info').removeClass('has-error');
+                label.remove();
+            },
+
+            errorPlacement: function (error, element) {
+                if($(error).text() == ""){
+                    $(element).closest('.basic_info').find(".check_login").hide();
+                    if($(element).attr("id") == "psw"){
+                        $('.icon_eye').show();
+                    }
+                }else {
+                    $(element).closest('.basic_info').find(".check_login").html('<i></i>' + $(error).text());
+                    if($(element).attr("id") == "psw"){
+                        $('.icon_eye').hide();
+                    }
+                }
+            },
+
+            submitHandler: function (form) {
+            }
+        });
+
+        $('.login_form input').keypress(function (e) {
+            if (e.which == 13) {
+                if ($('.login_form').validate().form()) {
+                    $('.login_form .login_up').click();
+                }
+                return false;
+            }
+        });
+
+        $('.login_form #name').bind('input propertychange', function () {
+            $('#check_login_phone').hide();
+        });
+
+        $('.login_form #psw').bind('input propertychange', function () {
+            $('#check_login_pass').hide();
+            $('.icon_eye').show();
+        });
+
+        var login = function () {
+            var btn = jQuery('.login_form .login_up');
+            btn.unbind('click');
+            var frm = $('.login_form');
+            var dataPara = getFormJson(frm);
+            if (frm.validate().form()) {
+                $.ajax({
+                    url: frm.attr('action'),
+                    type: frm.attr('method'),
+                    data: dataPara,
+                    async: true,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (!data.success) {
+                            if (data.name_error) {
+                                $('#check_login_phone').show();
+                                $('#check_login_phone').html('<i></i>' + data.name_error);
+                            }
+                            if (data.psw_error) {
+                                $('.icon_eye').hide();
+                                $('#check_login_pass').show();
+                                $('#check_login_pass').html('<i></i>' + data.psw_error);
+                            }
+                            btn.bind('click', login);
+                        } else {
+                            location.href = "/mgr/";
+                        }
+                    },
+                    error: function () {
+                        generateLogin('致命错误,请联系管理员！');
+                        btn.bind('click', login);
+                    }
+                });
+            } else {
+                btn.bind('click', login);
+            }
+        };
+        jQuery('.login_form .login_up').bind('click', login);
+    };
+
+    var handlerLoginByTel = function (captchaObj) {
+        captchaObj1 = captchaObj;
+        codeDownLogin();
+        $('.login_form_tel').validate({
+            errorElement: 'span', // default input error message container
+            errorClass: 'error-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                name: {
+                    required: true,
+                    mobileno: true
+                },
+                smscode: {
+                    required: true
+                }
+            },
+            messages: {
+                name: {
+                    required: '请输入手机号码',
+                    mobileno: '手机号码错误'
+                },
+                smscode: {
+                    required: '验证码错误'
+                }
+            },
+
+            invalidHandler: function (event, validator) {
+
+            },
+
+            highlight: function (element) { // hightlight error inputs
+                $(element).closest('.basic_info').addClass('has-error');
+                $(element).closest('.basic_info').find(".check_login_tel").show();
+            },
+
+            success: function (label) {
+                label.closest('.basic_info').removeClass('has-error');
+                label.remove();
+            },
+
+            errorPlacement: function (error, element) {
+                if($(error).text() == ""){
+                    $(element).closest('.basic_info').find(".check_login_tel").hide();
+                }else {
+                    $(element).closest('.basic_info').find(".check_login_tel").html('<i></i>' + $(error).text());
+                }
+            },
+
+            submitHandler: function (form) {
+            }
+        });
+
+        $('.login_form_tel #name').bind('input propertychange', function () {
+            $('#check_login_tel_phone').hide();
+        });
+
+        $('.login_form_tel #smscode').bind('input propertychange', function () {
+            $('#check_login_tel_code').hide();
+        });
+
+        var tellogin = function () {
+            var btn = jQuery('.login_form_tel .login_up');
+            btn.unbind('click');
+            var frm = $('.login_form_tel');
+            var dataPara = getFormJson(frm);
+            if (frm.validate().form()) {
+                $.ajax({
+                    url: frm.attr('action'),
+                    type: frm.attr('method'),
+                    data: dataPara,
+                    async: true,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (!data.success) {
+                            if (data.name_error) {
+                                $('#check_login_tel_phone').show();
+                                if (data.name_error == "账号有误") {
+                                    $('#check_login_tel_phone').html('<i></i>' + '手机号码错误');
+                                } else {
+                                    $('#check_login_tel_phone').html('<i></i>' + data.name_error);
+                                }
+                            }
+                            if (data.smscode_error) {
+                                $('#check_login_tel_code').show();
+                                $('#check_login_tel_code').html('<i></i>' + data.smscode_error);
+                            }
+                            btn.bind('click', tellogin);
+                        } else {
+                            location.href = "/mgr/";
+                        }
+                    },
+                    error: function () {
+                        generateLogin('致命错误,请联系管理员！');
+                        btn.bind('click', tellogin);
+                    }
+                });
+            } else {
+                btn.bind('click', tellogin);
+            }
+        };
+
+        var sendMsg = function () {
+            var btn = $('.login_form_tel #popup-submit');
+            var btnv = $('.login_form_tel #voice-submit');
+            var tel = $('.login_form_tel #name').val();
+            if (btn[0].className.indexOf('click') < 0 || btnv[0].className.indexOf('click') < 0) {
+                return;
+            }
+            if (!tel) {
+                btn.addClass('click');
+                btnv.addClass('click');
+                $('#check_login_tel_phone').show();
+                $('#check_login_tel_phone').html('<i></i>' + '请输入手机号码');
+                return;
+            }
+            var p = /(^0{0,1}1\d{10}$)/;
+            if (tel != "" && tel.replace(/\s/g, "") != "" && !(p.exec(tel))) {
+                btn.addClass('click');
+                btnv.addClass('click');
+                $('#check_login_tel_phone').show();
+                $('#check_login_tel_phone').html('<i></i>' + '请输入正确的手机号码');
+                return;
+            }
+            btn.removeClass('click');
+            btnv.removeClass('click');
+            var validate = captchaObj.getValidate();
+            if (!validate) {
+                generateLogin('请先完成验证！');
+                return;
+            }
+            captchaObj1.disable();
+            captchaObj2.disable();
+            $.ajax({
+                url: '/smscode/sendLoginSMS',
+                type: 'post',
+                data: {
+                    geetest_challenge: validate.geetest_challenge,
+                    geetest_validate: validate.geetest_validate,
+                    geetest_seccode: validate.geetest_seccode,
+                    "tel": tel,
+                    "mtype": 'voice',
+                    "type": 1
+                },
+                async: true,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status) {
+                        generateLogin(data.msg);
+                        setCountdownCookie("countdowncookie", 60);
+                        codeDownLogin();
+                        newregister.codeDownRegister();
+                        newcoderegister.newCodeDownRegister();
+                        findpsw1.codeDownFindPsw();
+                    } else {
+                        generateLogin(data.msg);
+                        btn.addClass('click');
+                        btnv.addClass('click');
+                        captchaObj1.enable();
+                        captchaObj2.enable();
+                    }
+                },
+                error: function () {
+                    generateLogin("服务器繁忙，请稍后再试！");
+                    captchaObj1.enable();
+                    captchaObj2.enable();
+                    btn.addClass('click');
+                    btnv.addClass('click');
+                }
+            });
+        };
+
+        // 弹出式需要绑定触发验证码弹出按钮
+        captchaObj.bindOn(".login_form_tel #voice-submit");
+
+        // 将验证码加到id为captcha的元素里
+        captchaObj.appendTo(".login_form_tel #voice-captcha");
+
+        $('.login_form_tel #voice-submit').bind('click', sendMsg);
+        $('.login_form_tel .login_up').bind('click', tellogin);
+    };
+
+    var handlerLoginBySMS = function (captchaObj) {
+        captchaObj2 = captchaObj;
+        codeDownLogin();
+        var sendMsg = function () {
+            var btn = $('.login_form_tel #popup-submit');
+            var btnv = $('.login_form_tel #voice-submit');
+            var tel = $('.login_form_tel #name').val();
+            if (btn[0].className.indexOf('click') < 0 || btnv[0].className.indexOf('click') < 0) {
+                return;
+            }
+            if (!tel) {
+                btn.addClass('click');
+                btnv.addClass('click');
+                $('#check_login_tel_phone').show();
+                $('#check_login_tel_phone').html('<i></i>' + '请输入手机号码');
+                return;
+            }
+            var p = /(^0{0,1}1\d{10}$)/;
+            if (tel != "" && tel.replace(/\s/g, "") != "" && !(p.exec(tel))) {
+                btn.addClass('click');
+                btnv.addClass('click');
+                $('#check_login_tel_phone').show();
+                $('#check_login_tel_phone').html('<i></i>' + '请输入正确的手机号码');
+                return;
+            }
+            btn.removeClass('click');
+            btnv.removeClass('click');
+            var validate = captchaObj.getValidate();
+            if (!validate) {
+                generateLogin('请先完成验证！');
+                return;
+            }
+            captchaObj1.disable();
+            captchaObj2.disable();
+            $.ajax({
+                url: '/smscode/sendLoginSMS',
+                type: 'post',
+                data: {
+                    geetest_challenge: validate.geetest_challenge,
+                    geetest_validate: validate.geetest_validate,
+                    geetest_seccode: validate.geetest_seccode,
+                    "tel": tel,
+                    "mtype": 'sms',
+                    "type": 1
+                },
+                async: true,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status) {
+                        generateLogin(data.msg);
+                        setCountdownCookie("countdowncookie", 60);
+                        codeDownLogin();
+                        newregister.codeDownRegister();
+                        newcoderegister.newCodeDownRegister();
+                        findpsw1.codeDownFindPsw();
+                    } else {
+                        generateLogin(data.msg);
+                        captchaObj1.enable();
+                        captchaObj2.enable();
+                        btn.addClass('click');
+                        btnv.addClass('click');
+                    }
+                },
+                error: function () {
+                    generateLogin("服务器繁忙，请稍后再试！");
+                    captchaObj1.enable();
+                    captchaObj2.enable();
+                    btn.addClass('click');
+                    btnv.addClass('click');
+                }
+            });
+        };
+
+        // 弹出式需要绑定触发验证码弹出按钮
+        captchaObj.bindOn(".login_form_tel #popup-submit");
+
+        // 将验证码加到id为captcha的元素里
+        captchaObj.appendTo(".login_form_tel #popup-captcha");
+
+        $('.login_form_tel #popup-submit').bind('click', sendMsg);
+
+        $('.login_form_tel input').keypress(function (e) {
+            if (e.which == 13) {
+                if ($('.login_form_tel').validate().form()) {
+                    $('.login_form_tel .login_up').click();
+                }
+                return false;
+            }
+        });
+    };
+
+    //设置cookie
+    var setCountdownCookie = function (name, time) {
+        //设置名称为name,值为value的Cookie
+        var expdate = new Date();   //初始化时间
+        expdate.setTime(expdate.getTime() + time * 1000);   //时间
+        document.cookie = name + "=" + expdate.toGMTString() + ";expires=" + expdate.toGMTString() + ";path=/";
+    };
+
+    var generateLogin = function (msg) {
+        $(".coderight").html(msg);
+        $(".codemask").show();
+        window.setTimeout(function(){
+            $(".codemask").hide();
+        },3000);
+    };
+
+    var codeDownLogin = function () {
+        var btn = $('.login_form_tel #popup-submit');
+        var btnv = $('.login_form_tel #voice-submit');
+        var countdowncookie = getCookie("countdowncookie");
+        if (countdowncookie == "" || countdowncookie == null) {
+            btn.addClass('click');
+            btnv.addClass('click');
+            btn.removeClass('btnHui');
+            if (captchaObj1 != null) {
+                captchaObj1.enable();
+            }
+            if (captchaObj2 != null) {
+                captchaObj2.enable();
+            }
+            btn.val("发送短信验证码");
+            //设置cookie 为60
+        } else {
+            var expdate = new Date(countdowncookie);
+            var date = new Date();   //初始化时间
+            var countdown = Math.ceil((expdate - date) / 1000);
+            btn.removeClass('click');
+            btnv.removeClass('click');
+            btn.addClass('btnHui');
+            if (captchaObj1 != null) {
+                captchaObj1.disable();
+            }
+            if (captchaObj2 != null) {
+                captchaObj2.disable();
+            }
+            btn.val(countdown + "秒后重新获取");
+            setTimeout(function () {
+                codeDownLogin();
+            }, 1000);
+        }
+    };
+
+    return {
+        init: function () {
+            handlerLogin();
+            $.ajax({
+                // 获取id，challenge，success（是否启用failback）
+                url: "/StartCaptchaServlet?time=" + new Date(),//加参数，防止被防重复提交机制abort掉
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+
+                    // 使用initGeetest接口
+                    // 参数1：配置参数
+                    // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+                    initGeetest({
+                        gt: data.gt,
+                        challenge: data.challenge,
+                        product: "popup", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                        offline: !data.success // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                    }, handlerLoginByTel);
+                }
+            });
+            $.ajax({
+                // 获取id，challenge，success（是否启用failback）
+                url: "/StartCaptchaServlet?time=" + new Date(),//加参数，防止被防重复提交机制abort掉
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+
+                    // 使用initGeetest接口
+                    // 参数1：配置参数
+                    // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+                    initGeetest({
+                        gt: data.gt,
+                        challenge: data.challenge,
+                        product: "popup", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                        offline: !data.success // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                    }, handlerLoginBySMS);
+                }
+            });
+        },
+
+        codeDownLogin:function () {
+            codeDownLogin();
+        }
+    };
+}();

@@ -1,0 +1,28 @@
+*{margin: 0;padding: 0;font-family: "Microsoft Yahei";box-sizing: border-box;}
+ul{ list-style: none}
+a{text-decoration: none; color: inherit;}
+.cont{width: 1200px; margin: 0 auto; overflow: hidden;}
+.lt{float: left}
+.rt{float: right}
+.o{overflow: hidden}
+img{vertical-align: middle;}
+.clear{clear:both;}
+/*首页*/
+.mainy{padding-top: 100px;}
+.mainy .biaoti{margin-bottom: 100px;}
+.mainy .neirong{margin-top: 150px;}
+.neirong h2{  background: url("caseIcon.png")no-repeat left 8px ;  font-size:30px;  color: #fe921f;
+    font-weight: bold;  padding-left: 40px;margin-bottom: 10px;}
+.mainy .timo{margin-top: 100px;}
+.mainy .neirong span{width: 380px;display: block;color: rgb(120,120,120);}
+.mainy .timo .neirong{text-align: left;}
+.mainy .duan{padding-bottom: 48px;}
+.mainy .tupian{margin-top: 50px;}
+.mainy .piic{position: relative;width: 100%;margin-top: 100px}
+.mainy .piic .one{position: absolute;  left: 565px;  bottom: 27px;opacity: 0;  }
+.mainy .piic .two{position: absolute;  left: 710px;  bottom: 66px;opacity: 0; }
+.mainy .piic .three{position: absolute;  left: 880px;  bottom: 60px;opacity: 0;}
+.mainy .disantu{position: relative;width: 100%;}
+.mainy .diyi{position: absolute;  left: 487px;  bottom: 150px;}
+.mainy .dier{position: absolute;  left: 670px;  bottom: 210px;}
+.mainy .three{position: absolute;  left: 889px;  bottom: 269px;}

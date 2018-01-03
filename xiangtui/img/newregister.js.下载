@@ -1,0 +1,288 @@
+/**
+ * Created by Shaowankai on 2016/11/30.
+ */
+var newregister = function () {
+    var captchaObj1;
+    var handleRegister = function (captchaObj) {
+        captchaObj1 = captchaObj;
+        codeDownRegister();
+        $('.register_form input').keypress(function (e) {
+            if (e.which == 13) {
+                if ($('.register_form').validate().form()) {
+                    $('.register_form .register').click();
+                }
+                return false;
+            }
+        });
+
+        $('.register_form #tel').bind('input propertychange', function () {
+            $('.register_form .validate').hide();
+        });
+
+        $('.register_form #password').bind('input propertychange', function () {
+            $('.register_form .validate').hide();
+        });
+
+        $('.register_form #code').bind('input propertychange', function () {
+            $('.register_form .validate').hide();
+        });
+
+        /**
+         * 发送短信验证码
+         */
+        var sendMsg = function () {
+            if (!$(this).hasClass('click')) {
+                return false;
+            }
+            var tel = $('.register_form #tel').val();
+            var p = /(^0{0,1}1\d{10}$)/;
+            if (tel == "" ||  !p.test(tel)) {
+                $('.register_form .validate').html('<i></i>'+'请填写正确的手机号码');
+                $('.register_form .validate').show();
+                return false;
+            }
+
+            var btn = jQuery('.register_form #codeResendBtn');
+            // 移除class，防止重复提交
+            btn.removeClass('click');
+            // 先验证手机号是否已经注册
+            $.ajax({
+                url: '/checktel',
+                type: "get",
+                async: true,
+                dataType: 'json',
+                data: {'tel': tel},
+                success: function (data, textStatus) {
+                    if (!data.status) {
+                        var validate = captchaObj.getValidate();
+                        if (!validate) {
+                            generateRegister('请先完成验证！');
+                            return;
+                        }
+                        captchaObj1.disable();
+                        $.ajax({
+                            url: '/smscode/sendRegSMS',
+                            type: 'post',
+                            data: {
+                                // 二次验证所需的三个值
+                                geetest_challenge: validate.geetest_challenge,
+                                geetest_validate: validate.geetest_validate,
+                                geetest_seccode: validate.geetest_seccode,
+                                "tel": tel,
+                                "mtype": 'sms',
+                                "skip": 1
+                            },
+                            async: true,
+                            dataType: 'json',
+                            success: function (data1) {
+                                if (data1.status) {
+                                    setCountdownCookie("countdowncookie", 60);
+                                    codeDownRegister();
+                                    newlogin.codeDownLogin();
+                                    newcoderegister.newCodeDownRegister();
+                                    findpsw1.codeDownFindPsw();
+                                    generateRegister(data1.msg);
+                                } else {
+                                    generateRegister(data1.msg);
+                                    btn.addClass('click');
+                                    captchaObj1.enable();
+                                }
+                            },
+                            error: function () {
+                                btn.addClass('click');
+                                captchaObj1.enable();
+                                generateRegister("服务器繁忙，请稍后再试！");
+                            }
+                        });
+                    } else {
+                        $('.register_form .validate').html('<i></i>' + data.msg);
+                        $('.register_form .validate').show();
+                        btn.addClass('click');
+                    }
+                },
+
+                error: function (jqXHR, textStatus, errorThrown) {
+                    btn.addClass('click');
+                    captchaObj1.enable();
+                    generateRegister("服务器繁忙，请稍后再试！");
+                }
+            });
+        };
+
+        var register = function () {
+            var tel = $('.register_form #tel').val();
+            var p = /(^0{0,1}1\d{10}$)/;
+            if (tel == "" ||  !p.test(tel)) {
+                $('.register_form .validate').html('<i></i>'+'请填写正确的手机号码');
+                $('.register_form .validate').show();
+                return false;
+            }
+
+            var flag = true;
+            $.ajax({
+                url: '/checktel',
+                type: "get",
+                async: false,
+                dataType: 'json',
+                data: {'tel': tel},
+                success: function (data, textStatus) {
+                    if (data.status == 1) {
+                        flag = false;
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    generateRegister("服务器繁忙，请稍后再试！");
+                }
+            });
+            if (!flag) {
+                $('.register_form .validate').html('<i></i>' + '该手机号已注册');
+                $('.register_form .validate').show();
+                return false;
+            }
+
+            var password = $('.register_form #password').val();
+            if (password.length < 6 || password.length > 22) {
+                $('.register_form .validate').html('<i></i>'+'请输入6-22位密码');
+                $('.register_form .validate').show();
+                return false;
+            }
+            var code = $('.register_form #code').val();
+            if (!code) {
+                $('.register_form .validate').html('<i></i>'+'请输入手机验证码');
+                $('.register_form .validate').show();
+                return false;
+            }
+            var frm = $('.register_form');
+            var dataPara = getFormJson(frm);
+            dataPara.needLogin = 1;
+            if (frm.validate().form()) {
+                $(".maskBlack").show();
+                $(".loaderBox").show();
+                $.ajax({
+                    url: frm.attr('action'),
+                    type: frm.attr('method'),
+                    data: dataPara,
+                    async: true,
+                    dataType: 'json',
+                    success: function (data) {
+                        $(".maskBlack").hide();
+                        $(".loaderBox").hide();
+                        if (data.status == 4) {
+                            location.href = "/mgr/";
+                        } else if (data.status == 6 || data.status == 7) {
+                            generateRegister(data.msg);
+                        } else {
+                            $('.register_form .validate').html('<i></i>' + data.msg);
+                            $('.register_form .validate').show();
+                        }
+                    },
+                    error: function () {
+                        $(".maskBlack").hide();
+                        $(".loaderBox").hide();
+                        generateRegister("服务器繁忙，请稍后再试！");
+                    }
+                });
+            }
+        }
+        // 弹出式需要绑定触发验证码弹出按钮
+        captchaObj.bindOn(".register_form #codeResendBtn");
+        // 将验证码加到id为captcha的元素里
+        captchaObj.appendTo(".register_form #popup-captcha");
+        jQuery('.register_form #codeResendBtn').bind('click', sendMsg);
+        jQuery('.register_form .register').bind('click', register);
+    };
+
+    var setCountdownCookie = function (name, time) {
+        //设置名称为name,值为value的Cookie
+        var expdate = new Date();   //初始化时间
+        expdate.setTime(expdate.getTime() + time * 1000);   //时间
+        document.cookie = name + "=" + expdate.toGMTString() + ";expires=" + expdate.toGMTString() + ";path=/";
+    };
+
+    var generateRegister = function (msg) {
+        $(".coderight").html(msg);
+        $(".codekszc").show();
+        window.setTimeout(function(){
+            $(".codekszc").hide();
+        },3000);
+    };
+    var codeDownRegister = function() {
+        var btn = $('.register_form #codeResendBtn');
+        var countdowncookie = getCookie("countdowncookie");
+        if (countdowncookie == "" || countdowncookie == null) {
+            btn.html("获取验证码");
+            btn.addClass('click');
+            btn.removeClass('huiBtn');
+            if(captchaObj1 != null) {
+                captchaObj1.enable();
+            }
+            //设置cookie 为60
+        } else {
+            var expdate = new Date(countdowncookie);
+            var date = new Date();   //初始化时间
+            var countdown = Math.ceil((expdate - date) / 1000);
+            btn.html(countdown + "秒后重新获取");
+            btn.removeClass('click');
+            btn.addClass('huiBtn');
+            if(captchaObj1 != null) {
+                captchaObj1.disable();
+            }
+            setTimeout(function () {
+                codeDownRegister();
+            }, 1000);
+        }
+    };
+
+    return {
+        init: function () {
+            $.ajax({
+                // 获取id，challenge，success（是否启用failback）
+                url: "/StartCaptchaServlet?time=" + new Date(),//加参数，防止被防重复提交机制abort掉
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+                    // 使用initGeetest接口
+                    // 参数1：配置参数
+                    // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+                    initGeetest({
+                        gt: data.gt,
+                        challenge: data.challenge,
+                        product: "popup", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                        offline: !data.success // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                    }, handleRegister);
+                }
+            });
+        },
+        codeDownRegister:function () {
+            codeDownRegister();
+        }
+    };
+}();
+//电话号码重复Check
+jQuery.validator.addMethod("telchk", function (value) {
+    var flag = true;
+    $.ajax({
+        url: '/checktel',
+        type: "get",
+        async: false,
+        dataType: 'json',
+        data: {'tel': value},
+        success: function (data, textStatus) {
+            flag = !data.status;
+            if (!flag) {
+                jQuery.extend(jQuery.validator.messages, {
+                    telchk: data.msg
+                });
+                /*$('.register_form .validate').html('<i></i>' + data.msg);
+                $('.register_form .validate').show();*/
+                /*jQuery.extend(jQuery.validator.messages, {
+                    telchk: "*该电话号码已被注册！<a href='#' onclick=showLogin()>点此登录</a>"
+                });*/
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            flag = false;
+        }
+    });
+    return flag;
+}, "服务器繁忙，请稍后再试！");

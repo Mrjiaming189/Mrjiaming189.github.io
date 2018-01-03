@@ -1,0 +1,492 @@
+/**
+ * Created by Shaowankai on 2016/11/30.
+ */
+var newcoderegister = function () {
+    var captchaObj1, captchaObj2;
+
+    var handleRegister = function (captchaObj) {
+        captchaObj1 = captchaObj;
+        newCodeDownRegister();
+        $('.new_register_form').validate({
+            errorElement: 'span', // default input error message container
+            errorClass: 'error-block registerTips', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            onkeyup: false,
+            rules: {
+                tel: {
+                    required: true,
+                    mobileno: true,
+                    telchk: true
+                },
+                pwd: {
+                    required: true,
+                    minlength: 6,
+                    maxlength: 22
+                },
+                code: {
+                    required: true
+                }
+            },
+            messages: {
+                tel: {
+                    mobileno: '请输入正确的手机号码',
+                    required: '请输入手机号码'
+                },
+                pwd: {
+                    required: '请输入密码',
+                    minlength: '密码必须在6-22位',
+                    maxlength: '密码必须在6-22位'
+                },
+                code: {
+                    required: '验证码错误'
+                }
+            },
+
+            invalidHandler: function (event, validator) {
+
+            },
+
+            highlight: function (element) { // hightlight error inputs
+                $(element).closest('.basic_info').addClass('has-error');
+                $(element).closest('.basic_info').find(".check_register").show();
+            },
+
+            success: function (label) {
+                label.closest('.basic_info').removeClass('has-error');
+                label.remove();
+            },
+
+            errorPlacement: function (error, element) {
+                if($(error).text() == ""){
+                    $(element).closest('.basic_info').find(".check_register").hide();
+                    if($(element).attr("id") == "register_pwd"){
+                        $('.icon_eye').show();
+                    }
+                }else {
+                    $(element).closest('.basic_info').find(".check_register").html('<i></i>' + $(error).text());
+                    if($(element).attr("id") == "register_pwd"){
+                        $('.icon_eye').hide();
+                    }
+                }
+            },
+
+            submitHandler: function (form) {
+            }
+        });
+
+        $('.new_register_form input').keypress(function (e) {
+            if (e.which == 13) {
+                if ($('.new_register_form').validate().form()) {
+                    $('.new_register_form .register_up').click();
+                }
+                return false;
+            }
+        });
+
+        $('.new_register_form #tel').bind('input propertychange', function () {
+            $('#check_register_phone').hide();
+        });
+
+        $('.new_register_form #register_pwd').bind('input propertychange', function () {
+            $('#check_register_pass').hide();
+        });
+
+        $('.new_register_form #register_code').bind('input propertychange', function () {
+            $('#check_register_code').hide();
+        });
+
+        /**
+         * 发送短信验证码
+         */
+        var sendMsg = function () {
+            if (!$(this).hasClass('click')) {
+                return false;
+            }
+            var tel = $('.new_register_form #tel').val();
+            if (!tel) {
+                $('#check_register_phone').show();
+                $('#check_register_phone').html('<i></i>' + '请输入手机号码');
+                return;
+            }
+            var p = /(^0{0,1}1\d{10}$)/;
+            if (tel != "" && tel.replace(/\s/g, "") != "" && !(p.exec(tel))) {
+                $('#check_register_phone').show();
+                $('#check_register_phone').html('<i></i>' + '请输入正确的手机号码');
+                return;
+            }
+
+            var btn = jQuery('.new_register_form #register-submit');
+            var btnv = jQuery('.new_register_form #register-voice');
+            // 移除class，防止重复提交
+            btn.removeClass('click');
+            btnv.removeClass('click');
+            // 先验证手机号是否已经注册
+            $.ajax({
+                url: '/checktel',
+                type: "get",
+                async: true,
+                dataType: 'json',
+                data: {'tel': tel},
+                success: function (data, textStatus) {
+                    if (!data.status) {
+                        var validate = captchaObj.getValidate();
+                        if (!validate) {
+                            newGenerateRegister('请先完成验证！');
+                            return;
+                        }
+                        captchaObj1.disable();
+                        captchaObj2.disable();
+                        $.ajax({
+                            url: '/smscode/sendRegSMS',
+                            type: 'post',
+                            data: {
+                                // 二次验证所需的三个值
+                                geetest_challenge: validate.geetest_challenge,
+                                geetest_validate: validate.geetest_validate,
+                                geetest_seccode: validate.geetest_seccode,
+                                "tel": tel,
+                                "mtype": 'sms',
+                                "skip": 1
+                            },
+                            async: true,
+                            dataType: 'json',
+                            success: function (data1) {
+                                if (data1.status) {
+                                    setCountdownCookie("countdowncookie", 60);
+                                    newCodeDownRegister();
+                                    newlogin.codeDownLogin();
+                                    newregister.codeDownRegister();
+                                    findpsw1.codeDownFindPsw();
+                                    newGenerateRegister(data1.msg);
+                                } else {
+                                    newGenerateRegister(data1.msg);
+                                    btn.addClass('click');
+                                    btnv.addClass('click');
+                                    captchaObj1.enable();
+                                    captchaObj2.enable();
+                                }
+                            },
+                            error: function () {
+                                btn.addClass('click');
+                                btnv.addClass('click');
+                                captchaObj1.enable();
+                                captchaObj2.enable();
+                                newGenerateRegister("服务器繁忙，请稍后再试！");
+                            }
+                        });
+                    } else {
+                        $('#check_register_phone').show();
+                        $('#check_register_phone').html('<i></i>' + data.msg);
+                        btn.addClass('click');
+                        btnv.addClass('click');
+                    }
+                },
+
+                error: function (jqXHR, textStatus, errorThrown) {
+                    btn.addClass('click');
+                    btnv.addClass('click');
+                    captchaObj1.enable();
+                    captchaObj2.enable();
+                    newGenerateRegister('服务器繁忙，请稍后再试！');
+                }
+            });
+        };
+
+        var register = function () {
+            var frm = $('.new_register_form');
+            var dataPara = getFormJson(frm);
+            dataPara.needLogin = 1;
+            if (frm.validate().form()) {
+                $(".loaderBox").show();
+                $.ajax({
+                    url: frm.attr('action'),
+                    type: frm.attr('method'),
+                    data: dataPara,
+                    async: true,
+                    dataType: 'json',
+                    success: function (data) {
+                        $(".loaderBox").hide();
+                        if (data.status == 4) {
+                            $(".maskBlack").show();
+                            $(".regist_box").hide();
+                            $(".regist_sus").show();
+                            $(".regist_sus .login_foot span").click(function () {
+                                location.href = "/mgr/";
+                            });
+                            //   系统自动跳转时间
+                            var initsencond = 3;
+                            $(".skip>span").html(initsencond);
+                            var timer_xt=window.setInterval(timeout,1000);
+                            function timeout() {
+                                if(initsencond == 0){
+                                    location.href = "/mgr/";
+                                    clearInterval(timer_xt);
+                                }
+                                $(".skip>span").html(initsencond);
+                                initsencond--;
+                            }
+                        } else if (data.status == 6 || data.status == 7) {
+                            newGenerateRegister(data.msg);
+                        } else if (data.status == 0 || data.status == 2) {
+                            $('#check_register_phone').show();
+                            $('#check_register_phone').html('<i></i>' + data.msg);
+                        } else if (data.status == 1) {
+                            $('#check_register_pass').show();
+                            $('#check_register_pass').html('<i></i>' + data.msg);
+                        } else if (data.status == 3) {
+                            $('#check_register_code').show();
+                            $('#check_register_code').html('<i></i>' + data.msg);
+                        }
+                    },
+                    error: function () {
+                        $(".loaderBox").hide();
+                        newGenerateRegister("服务器繁忙，请稍后再试！");
+                    }
+                });
+            }
+        }
+        // 弹出式需要绑定触发验证码弹出按钮
+        captchaObj.bindOn(".new_register_form #register-submit");
+        // 将验证码加到id为captcha的元素里
+        captchaObj.appendTo(".new_register_form #register-captcha");
+        jQuery('.new_register_form #register-submit').bind('click', sendMsg);
+        jQuery('.new_register_form .register_up').bind('click', register);
+    };
+    
+    var handleRegisterVoice = function (captchaObj) {
+        captchaObj2 = captchaObj;
+        newCodeDownRegister();
+        /**
+         * 发送短信验证码
+         */
+        var sendMsg = function () {
+
+            if (!$(this).hasClass('click')) {
+                return false;
+            }
+
+            var tel = $('.new_register_form #tel').val();
+
+            if (!tel) {
+                $('#check_register_phone').show();
+                $('#check_register_phone').html('<i></i>' + '请输入手机号码');
+                return;
+            }
+            var p = /(^0{0,1}1\d{10}$)/;
+            if (tel != "" && tel.replace(/\s/g, "") != "" && !(p.exec(tel))) {
+                $('#check_register_phone').show();
+                $('#check_register_phone').html('<i></i>' + '请输入正确的手机号码');
+                return;
+            }
+
+            var btn = jQuery('.new_register_form #register-submit');
+            var btnv = jQuery('.new_register_form #register-voice');
+            // 移除class，防止重复提交
+            btn.removeClass('click');
+            btnv.removeClass('click');
+            // 先验证手机号是否已经注册
+            $.ajax({
+                url: '/checktel',
+                type: "get",
+                async: true,
+                dataType: 'json',
+                data: {'tel': tel},
+                success: function (data, textStatus) {
+                    if (!data.status) {
+                        captchaObj1.disable();
+                        captchaObj2.disable();
+                        var validate = captchaObj.getValidate();
+                        if (!validate) {
+                            newGenerateRegister('请先完成验证！');
+                            return;
+                        }
+                        $.ajax({
+                            url: '/smscode/sendRegSMS',
+                            type: 'post',
+                            data: {
+                                // 二次验证所需的三个值
+                                geetest_challenge: validate.geetest_challenge,
+                                geetest_validate: validate.geetest_validate,
+                                geetest_seccode: validate.geetest_seccode,
+                                "tel": tel,
+                                "mtype": 'voice',
+                                "skip": 1
+                            },
+                            async: true,
+                            dataType: 'json',
+                            success: function (data1) {
+                                if (data1.status) {
+                                    setCountdownCookie("countdowncookie", 60);
+                                    newCodeDownRegister();
+                                    newlogin.codeDownLogin();
+                                    newregister.codeDownRegister();
+                                    findpsw1.codeDownFindPsw();
+                                    newGenerateRegister(data1.msg);
+                                } else {
+                                    newGenerateRegister(data1.msg);
+                                    btn.addClass('click');
+                                    btnv.addClass('click');
+                                    captchaObj1.enable();
+                                    captchaObj2.enable();
+                                }
+                            },
+                            error: function () {
+                                btn.addClass('click');
+                                btnv.addClass('click');
+                                captchaObj1.enable();
+                                captchaObj2.enable();
+                                newGenerateRegister("服务器繁忙，请稍后再试！");
+                            }
+                        });
+                    } else {
+                        $('#check_register_phone').show();
+                        $('#check_register_phone').html('<i></i>' + data.msg);
+                        btn.addClass('click');
+                        btnv.addClass('click');
+                        captchaObj1.enable();
+                        captchaObj2.enable();
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    btn.addClass('click');
+                    btnv.addClass('click');
+                    newGenerateRegister('服务器繁忙，请稍后再试！');
+                }
+            });
+        };
+
+        // 弹出式需要绑定触发验证码弹出按钮
+        captchaObj.bindOn(".new_register_form #register-voice");
+
+        // 将验证码加到id为captcha的元素里
+        captchaObj.appendTo(".new_register_form #register-captcha");
+
+        jQuery('.new_register_form #register-voice').bind('click', sendMsg);
+    };
+
+    var newGenerateRegister = function (msg) {
+        $(".coderight").html(msg);
+        $(".codemask").show();
+        window.setTimeout(function(){
+            $(".codemask").hide();
+        },3000);
+    }
+
+    //设置cookie
+    var setCountdownCookie = function (name, time) {
+        //设置名称为name,值为value的Cookie
+        var expdate = new Date();   //初始化时间
+        expdate.setTime(expdate.getTime() + time * 1000);   //时间
+        document.cookie = name + "=" + expdate.toGMTString() + ";expires=" + expdate.toGMTString() + ";path=/";
+    }
+
+    var newCodeDownRegister = function () {
+        var btn = $('.new_register_form #register-submit');
+        var btnv = $('.new_register_form #register-voice');
+        var countdowncookie = getCookie("countdowncookie");
+        if (countdowncookie == "" || countdowncookie == null) {
+            btn.val("发送短信验证码");
+            btn.addClass('click');
+            btnv.addClass('click');
+            btn.removeClass('btnHui');
+            if (captchaObj1 != null) {
+                captchaObj1.enable();
+            }
+            if (captchaObj2 != null) {
+                captchaObj2.enable();
+            }
+            //设置cookie 为60
+        } else {
+            var expdate = new Date(countdowncookie);
+            var date = new Date();   //初始化时间
+            var countdown = Math.ceil((expdate - date) / 1000);
+            btn.val(countdown + "秒后重新获取");
+            btn.removeClass('click');
+            btnv.removeClass('click');
+            btn.addClass('btnHui');
+            if (captchaObj1 != null) {
+                captchaObj1.disable();
+            }
+            if (captchaObj2 != null) {
+                captchaObj2.disable();
+            }
+            setTimeout(function () {
+                newCodeDownRegister();
+            }, 1000);
+        }
+    }
+
+    return {
+        init: function () {
+            $.ajax({
+                // 获取id，challenge，success（是否启用failback）
+                url: "/StartCaptchaServlet?time=" + new Date(),//加参数，防止被防重复提交机制abort掉
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+
+                    // 使用initGeetest接口
+                    // 参数1：配置参数
+                    // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+                    initGeetest({
+                        gt: data.gt,
+                        challenge: data.challenge,
+                        product: "popup", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                        offline: !data.success // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                    }, handleRegister);
+                }
+            });
+
+            $.ajax({
+                // 获取id，challenge，success（是否启用failback）
+                url: "/StartCaptchaServlet?time=" + new Date(),//加参数，防止被防重复提交机制abort掉
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+                    // 使用initGeetest接口
+                    // 参数1：配置参数
+                    // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+                    initGeetest({
+                        gt: data.gt,
+                        challenge: data.challenge,
+                        product: "popup", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                        offline: !data.success // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                    }, handleRegisterVoice);
+                }
+            });
+        },
+        newCodeDownRegister:function () {
+            newCodeDownRegister();
+        }
+    };
+}();
+//电话号码重复Check
+jQuery.validator.addMethod("telchk", function (value) {
+    var flag = true;
+    $.ajax({
+        url: '/checktel',
+        type: "get",
+        async: false,
+        dataType: 'json',
+        data: {'tel': value},
+        success: function (data, textStatus) {
+            flag = !data.status;
+            if (!flag) {
+                /*jQuery.extend(jQuery.validator.messages, {
+                    telchk: "*该电话号码已被注册！<a href='#' onclick=showLogin()>点此登录</a>"
+                });*/
+                jQuery.extend(jQuery.validator.messages, {
+                    telchk: data.msg
+                });
+            }
+        },
+
+        error: function (jqXHR, textStatus, errorThrown) {
+            flag = false;
+        }
+    });
+    return flag;
+}, "服务器繁忙，请稍后再试！");
+
+

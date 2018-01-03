@@ -1,0 +1,745 @@
+/**
+ * 错误信息本地化，自定义验证
+ * Created by Xenox on 2016/1/21 0021.
+ */
+(function (factory) {
+    if (typeof define === "function" && define.amd) {
+        define(["jquery", "../jquery.validate"], factory);
+    } else if (typeof module === "object" && module.exports) {
+        module.exports = factory(require("jquery"));
+    } else {
+        factory(jQuery);
+    }
+}(function ($) {
+
+    /*
+     * Translated default messages for the jQuery validation plugin.
+     * Locale: ZH (Chinese, 中文 (Zhōngwén), 汉语, 漢語)
+     */
+    $.extend($.validator.messages, {
+        required: "这是必填内容",
+        remote: "请修正此字段",
+        email: "请输入有效的电子邮件地址",
+        url: "请输入有效的网址",
+        date: "请输入有效的日期",
+        dateISO: "请输入有效的日期 (YYYY-MM-DD)",
+        number: "请输入有效的数字",
+        digits: "只能输入数字",
+        creditcard: "请输入有效的信用卡号码",
+        equalTo: "你的输入不相同",
+        extension: "请输入有效的后缀",
+        integer: "请输入有效整数",
+        maxlength: $.validator.format("最多可以输入 {0} 个字符"),
+        minlength: $.validator.format("最少要输入 {0} 个字符"),
+        rangelength: $.validator.format("请输入长度在 {0} 到 {1} 之间的字符串"),
+        range: $.validator.format("请输入范围在 {0} 到 {1} 之间的数值"),
+        max: $.validator.format("请输入不大于 {0} 的数值"),
+        min: $.validator.format("请输入不小于 {0} 的数值"),
+        pswEqualTo: "两次输入密码不相同"
+    });
+}));
+
+$.validator.addMethod("numPassword", function (e, i) {
+    return e = $.trim(e), this.optional(i) || !/(?:0(?=1)|1(?=2)|2(?=3)|3(?=4)|4(?=5)|5(?=6)|6(?=7)|7(?=8)|8(?=9)){5}\d/.test(e) && !/(?:9(?=8)|8(?=7)|7(?=6)|6(?=5)|5(?=4)|4(?=3)|3(?=2)|2(?=1)|1(?=0)){5}\d/.test(e)
+}, "\u4e0d\u80fd\u987a\u589e\u6216\u987a\u51cf");
+
+$.validator.addMethod("echoNum", function (e, i) {
+    return e = $.trim(e), this.optional(i) || !/^(?:([0-9])\1{5})$/.test(e)
+}, "\u4e0d\u80fd\u5168\u662f\u76f8\u540c\u5b57\u7b26");
+
+$.validator.addMethod("telno", function (value) {
+    var tel = /(^[0-9]{3,4}\-[0-9]{7,8}$)|(^[0-9]{7,8}$)|(^[0−9]3,4[0-9]{3,8}$)|(^0{0,1}1\d{10}$)|(^400\d{7}$)/;
+    if (value != "" && value.replace(/\s/g, "") != "" && !(tel.exec(value))) {
+        return false;
+    }
+    return true;
+}, "电话号码格式不对，正确格式如下：\n座机号码：(区号-)座机号码 或 \n手机号码：11位手机号码 或 400电话：10位400开头号码");
+
+$.validator.addMethod("mobileno", function (value) {
+    var tel = /(^0{0,1}1\d{10}$)/;
+    if (value != "" && value.replace(/\s/g, "") != "" && !(tel.exec(value))) {
+        return false;
+    }
+    return true;
+}, "手机号码格式不对，正确格式如下：手机号码：11位手机号码");
+
+$.validator.addMethod("mobilenos", function (value, element, param) {
+    var tel = /(^0{0,1}1\d{10}$)/;
+    for (var i = 0; i < $(param).length; i++) {
+        if ($(param)[i].value != "" && $(param)[i].value.replace(/\s/g, "") != "" && !(tel.exec($(param)[i].value))) {
+            return false;
+        }
+    }
+    return true;
+}, "手机号码格式不对，正确格式如下：手机号码：11位手机号码");
+
+$.validator.addMethod("pricechk", function (value) {
+    var partten = /^\d+(\.\d{0,2})?$/;
+    if (value != "" && value.replace(/\s/g, "") != "" && !(partten.exec(value))) {
+        return false;
+    }
+    return true;
+}, "请输入整数或最多两位小数");
+
+// 中文字两个字节
+jQuery.validator.addMethod("byteRangeLength", function (value, element, param) {
+    var length = value.length;
+    for (var i = 0; i < value.length; i++) {
+        if (value.charCodeAt(i) > 127) {
+            length++;
+        }
+    }
+    return this.optional(element) || ( length >= param[0] && length <= param[1] );
+}, "请确保输入的值在3-15个字节之间(一个中文字算2个字节)");
+
+function isIdCardNo(num) {
+
+    var factorArr = new Array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1);
+    var parityBit = new Array("1", "0", "X", "9", "8", "7", "6", "5", "4", "3", "2");
+    var varArray = new Array();
+    var intValue;
+    var lngProduct = 0;
+    var intCheckDigit;
+    var intStrLen = num.length;
+    var idNumber = num;
+// initialize
+    if ((intStrLen != 15) && (intStrLen != 18)) {
+        return false;
+    }
+// check and set value
+    for (i = 0; i < intStrLen; i++) {
+        varArray[i] = idNumber.charAt(i);
+        if ((varArray[i] < '0' || varArray[i] > '9') && (i != 17)) {
+            return false;
+        } else if (i < 17) {
+            varArray[i] = varArray[i] * factorArr[i];
+        }
+    }
+
+    if (intStrLen == 18) {
+//check date
+        var date8 = idNumber.substring(6, 14);
+        if (isDate8(date8) == false) {
+            return false;
+        }
+// calculate the sum of the products
+        for (i = 0; i < 17; i++) {
+            lngProduct = lngProduct + varArray[i];
+        }
+// calculate the check digit
+        intCheckDigit = parityBit[lngProduct % 11];
+// check last digit
+        if (varArray[17] != intCheckDigit) {
+            return false;
+        }
+    }
+    else { //length is 15
+//check date
+        var date6 = idNumber.substring(6, 12);
+        if (isDate6(date6) == false) {
+
+            return false;
+        }
+    }
+    return true;
+
+}
+
+function isDate6(sDate) {
+    if (!/^[0-9]{6}$/.test(sDate)) {
+        return false;
+    }
+    var year, month, day;
+    year = sDate.substring(0, 4);
+    month = sDate.substring(4, 6);
+    if (year < 1700 || year > 2500) return false
+    if (month < 1 || month > 12) return false
+    return true
+}
+
+function isDate8(sDate) {
+    if (!/^[0-9]{8}$/.test(sDate)) {
+        return false;
+    }
+    var year, month, day;
+    year = sDate.substring(0, 4);
+    month = sDate.substring(4, 6);
+    day = sDate.substring(6, 8);
+    var iaMonthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    if (year < 1700 || year > 2500) return false
+    if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) iaMonthDays[1] = 29;
+    if (month < 1 || month > 12) return false
+    if (day < 1 || day > iaMonthDays[month - 1]) return false
+    return true
+}
+// 身份证号码验证 
+jQuery.validator.addMethod("idcardno", function (value, element) {
+    return this.optional(element) || isIdCardNo(value);
+}, "请正确输入身份证号码");
+
+//字母数字
+jQuery.validator.addMethod("alnum", function (value, element) {
+    return this.optional(element) || /^[a-zA-Z0-9]+$/.test(value);
+}, "只能包括英文字母和数字");
+
+// 邮政编码验证
+jQuery.validator.addMethod("zipcode", function (value, element) {
+    var tel = /^[0-9]{6}$/;
+    return this.optional(element) || (tel.test(value));
+}, "请正确填写邮政编码");
+
+// 汉字
+jQuery.validator.addMethod("chcharacter", function (value, element) {
+    var tel = /^[u4e00-u9fa5]+$/;
+    return this.optional(element) || (tel.test(value));
+}, "请输入汉字");
+
+// 字符最小长度验证（一个中文字符长度为2）
+jQuery.validator.addMethod("stringMinLength", function (value, element, param) {
+    var length = value.length;
+    for (var i = 0; i < value.length; i++) {
+        if (value.charCodeAt(i) > 127) {
+            length++;
+        }
+    }
+    return this.optional(element) || (length >= param);
+}, $.validator.format("长度不能小于{0}!"));
+
+// 字符最大长度验证（一个中文字符长度为2）
+jQuery.validator.addMethod("stringMaxLength", function (value, element, param) {
+    var length = value.length;
+    for (var i = 0; i < value.length; i++) {
+        if (value.charCodeAt(i) > 127) {
+            length++;
+        }
+    }
+    return this.optional(element) || (length <= param);
+}, $.validator.format("长度不能大于{0}!"));
+
+// 字符验证
+jQuery.validator.addMethod("string", function (value, element) {
+    var pattern = new RegExp(/^(([^\^<>';$"!~{}\`])*)$/);
+    return this.optional(element) || pattern.test(value);
+}, "请勿输入以下半角特殊符号：\^<>';$\"!~{}\`");
+
+// 邮政编码验证
+jQuery.validator.addMethod("zipCode", function (value, element) {
+    var tel = /^[0-9]{6}$/;
+    return this.optional(element) || (tel.test(value));
+}, "邮政编码格式错误!");
+
+// 必须以特定字符串开头验证
+jQuery.validator.addMethod("begin", function (value, element, param) {
+    var begin = new RegExp("^" + param);
+    return this.optional(element) || (begin.test(value));
+}, $.validator.format("必须以 {0} 开头!"));
+
+// 验证两次输入值是否不相同
+jQuery.validator.addMethod("notEqualTo", function (value, element, param) {
+    return value != $(param).val();
+}, "两次输入不能相同!");
+
+// 验证两次输入值是否不相同
+jQuery.validator.addMethod("notEqualToVal", function (value, element, param) {
+    return value != param;
+}, "两次输入不能相同!");
+
+
+// 验证值不允许与特定值等于
+jQuery.validator.addMethod("notEqual", function (value, element, param) {
+    return value != param;
+}, $.validator.format("输入值不允许为{0}!"));
+
+//验证值必须小于等于特定值或者特定输入框的值
+jQuery.validator.addMethod("lte", function (value, element, param) {
+    if (value.length < 1 || $(param).val().length < 1) {
+        return true;
+    }
+    jQuery.extend(jQuery.validator.messages, {
+        lte: "输入值不能大于 " + $(param).val() + "!"
+    });
+    return ((parseFloat(value) < parseFloat($(param).val())) || (parseFloat(value) == parseFloat($(param).val())));
+}, $.validator.format("输入值不能大于{0}!"));
+
+// 验证值必须大于特定值(不能等于)
+jQuery.validator.addMethod("gt", function (value, element, param) {
+    if (value.length < 1 || $(param).val().length < 1) {
+        return true;
+    }
+    jQuery.extend(jQuery.validator.messages, {
+        gt: "输入值必须大于 " + $(param).val() + "!"
+    });
+    return value > param;
+}, $.validator.format("输入值必须大于{0}!"));
+
+//根据城市设置价格最小值,包含常州0.2,其余0.05
+jQuery.validator.addMethod("minbycity", function (value, element, param) {
+    if (value.length < 1 || $(param).val().length < 1) {
+        return true;
+    }
+    var comparevalue = 0;
+
+    if($(param).val().split(',').indexOf('55822fccf4774c8cdd459010') != -1){
+        comparevalue = 0.2;
+    }else{
+        comparevalue = 0.05;
+    }
+
+    jQuery.extend(jQuery.validator.messages, {
+        minbycity: "计划推广价格不能小于" + comparevalue + "元！"
+    });
+
+    return value >= comparevalue;
+}, $.validator.format("计划推广价格不能小于{0}元！"));
+
+// 验证值必须大于等于特定值
+jQuery.validator.addMethod("gte", function (value, element, param) {
+    if (value.length < 1 || $(param).val().length < 1) {
+        return true;
+    }
+    jQuery.extend(jQuery.validator.messages, {
+        gte: "输入值必须大于等于 " + $(param).val() + "!"
+    });
+    return value > param;
+}, $.validator.format("输入值必须大于等于{0}!"));
+
+
+jQuery.validator.addMethod("uploadchk", function (value, element, param) {
+    if ($(param).val() == '1') {
+        return true;
+    }
+    return $.trim(value).length > 0;
+}, "请上传文件！");
+
+jQuery.validator.addMethod("chkname", function (value, element, param) {
+    var flag = true;
+    $.ajax({
+        url: '/mgr/chkSpreadName',
+        type: "POST",
+        async: false,
+        dataType: 'json',
+        data: {'name': value, 'type': param[0], 'id': $(param[1]).val()},
+        success: function (data, textStatus) {
+            flag = data.success;
+            if (!flag) {
+                jQuery.extend(jQuery.validator.messages, {
+                    chkname: "推广名称不能与待发布或进行中的推广名称重复，请修正！"
+                });
+            }
+        },
+
+        error: function (jqXHR, textStatus, errorThrown) {
+            flag = false;
+        }
+    });
+    return flag;
+}, "服务器繁忙，请稍后再试！");
+
+var word = "";
+
+jQuery.validator.addMethod("chkwords", function (value, element) {
+    var flag = true;
+    $.ajax({
+        url: '/chkwords',
+        type: "POST",
+        async: false,
+        dataType: 'json',
+        data: {'text': value},
+        success: function (data, textStatus) {
+            flag = data.success;
+            if (!flag) {
+                jQuery.extend(jQuery.validator.messages, {
+                    chkwords: "输入信息中含敏感词：" + data.word + "，请修正后提交！"
+                });
+            }
+        },
+
+        error: function (jqXHR, textStatus, errorThrown) {
+            flag = false;
+        }
+    });
+    return flag;
+}, "服务器繁忙，请稍后再试！");
+
+jQuery.validator.addMethod("name0", function (value, element, param) {
+    var couponType = $(".addCardBox #couponType option:selected").val();
+    if(couponType == 0 && (!value || value.length > 26)) {
+        return  false ;
+    } else {
+        return  true;
+    }
+}, $.validator.format("这是必填内容, 且不能超过26个字符!"));
+
+jQuery.validator.addMethod("name1", function (value, element, param) {
+    var couponType = $(".addCardBox #couponType option:selected").val();
+    if(couponType == 1 && (!value || value.length > 26)) {
+        return  false ;
+    } else {
+        return  true;
+    }
+}, $.validator.format("这是必填内容，且不能超过26个字符!"));
+
+jQuery.validator.addMethod("name2", function (value, element, param) {
+    var couponType = $(".addCardBox #couponType option:selected").val();
+    if(couponType == 2 && (!value || value.length > 26)) {
+        return false ;
+    } else {
+        return  true;
+    }
+}, $.validator.format("这是必填内容，且不能超过26个字符!"));
+
+jQuery.validator.addMethod("couponprice0", function (value, element, param) {
+    var couponType = $(".addCardBox #couponType option:selected").val();
+    if(couponType == 0 && (!value || isNaN(value) || value > 9999999)) {
+        return false ;
+    } else {
+        return  true;
+    }
+}, $.validator.format("这是必填内容，且必须填写10000000以内的数字!"));
+
+jQuery.validator.addMethod("couponprice1", function (value, element, param) {
+    var couponType = $(".addCardBox #couponType option:selected").val();
+    if(couponType == 1 && (!value || isNaN(value) || value <=0 || value > 10)) {
+        return false ;
+    } else {
+        return true;
+    }
+}, $.validator.format("这是必填内容，且必须填写0-10之间数字!"));
+
+jQuery.validator.addMethod("couponprice2", function (value, element, param) {
+    var couponType = $(".addCardBox #couponType option:selected").val();
+    if(couponType == 2 && (!value || value.length > 7) ) {
+        return false ;
+    } else {
+        return  true;
+    }
+}, $.validator.format("这是必填内容，且不能超过7个字符!"));
+
+
+function getFormJson(frm) {
+    var o = {};
+    var a = $(frm).serializeArray();
+    $.each(a, function () {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+
+    return o;
+}
+
+function Alert(title, message, fn) {
+    $.alert({
+        keyboardEnabled: true,
+        confirmKeys: [13],
+        backgroundDismiss: true,
+        confirmButtonClass: 'btn-warning',
+        title: title,
+        content: message,
+        confirmButton: '确认',
+        confirm: fn,
+        cancel: fn
+    });
+}
+
+function AlertExtends(inParam) {
+    var param = $.extend(true, {
+        keyboardEnabled: true,
+        confirmKeys: [13],
+        backgroundDismiss: true,
+        confirmButtonClass: 'btn-warning',
+        confirmButton: '确认'
+    }, inParam);
+    $.alert(param);
+}
+
+function Confirm(title, message, fnConfirm, fnCancel, confirmBtn, cancelBtn) {
+    confirmBtn = arguments[4] == null?'确认':arguments[4];
+    cancelBtn = arguments[5] == null?'取消':arguments[5];
+    $.confirm({
+        keyboardEnabled: true,
+        title: title,
+        content: message,
+        confirmKeys: [13],
+        cancelKeys: [27],
+        confirmButton: confirmBtn,
+        cancelButton: cancelBtn,
+        confirmButtonClass: 'btn-warning ',
+        cancelButtonClass: 'btn-grey',
+        confirm: fnConfirm,
+        cancel: fnCancel
+    });
+}
+
+
+function ConfirmExtends(inParam) {
+    var param = $.extend(true, {
+        keyboardEnabled: true,
+        confirmKeys: [13],
+        cancelKeys: [27],
+        confirmButton: '确认',
+        cancelButton: '取消',
+        confirmButtonClass: 'btn-warning ',
+        cancelButtonClass: 'btn-grey'
+    }, inParam);
+    $.confirm(param);
+}
+
+function Validate(formid, rules, messages) {
+    $(formid).validate({
+        errorElement: 'span', // default input error message container
+        errorClass: 'error-block registerTips', // default input error message class
+        focusInvalid: false, // do not focus the last invalid input
+        ignore: "",
+        onkeyup: false,
+        onclick: true,
+        rules: rules,
+        messages: messages,
+
+        invalidHandler: function (event, validator) {
+
+        },
+
+        highlight: function (element) { // hightlight error inputs
+            $(element).closest('.basic_info').addClass('has-error');
+        },
+
+        success: function (label) {
+            label.closest('.basic_info').removeClass('has-error');
+            label.remove();
+        },
+
+        errorPlacement: function (error, element) {
+            if (element.closest('.form_input').size() === 1) {
+                error.insertAfter(element.closest('.form_input'));
+            } else {
+                error.insertAfter(element);
+            }
+        },
+
+        submitHandler: function (form) {
+            //form.submit();
+        }
+    });
+}
+
+function addmulMonth(date, n) {
+    var s = date.split("/");
+    var yy = parseInt(s[0]);
+    var mm = parseInt(s[1]) - 1;
+    var dd = parseInt(s[2]);
+    var dt = new Date(yy, mm, dd);
+    dt.setMonth(dt.getMonth() + parseInt(n));
+    var month = parseInt(dt.getMonth()) + 1;
+    return dt.getFullYear() + "/" + month + "/" + dd;
+}
+
+function isIE10() {
+    if (window.ActiveXObject) {
+        var reg = /10\.0/;
+        var str = navigator.userAgent;
+        //reg.test(str);
+        if (reg.test(str)) {
+            return true;
+        }
+        ;
+    }
+    ;
+    return false;
+}
+
+//设置cookie
+function setCookie(name, value) {
+    document.cookie = name + "=" + value + ";path=/";
+}
+
+
+//设置cookie
+function setTimeCookie(name, value, time) {
+    //设置名称为name,值为value的Cookie
+    var expdate = new Date();   //初始化时间
+    expdate.setTime(expdate.getTime() + time * 1000);   //时间
+    document.cookie = name + "=" + value + ";expires=" + expdate.toGMTString() + ";path=/";
+}
+
+//获取cookie
+function getCookie(name)//取cookies函数
+{
+    var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+    if (arr != null) return unescape(arr[2]);
+    return null;
+}
+
+function jqGridInit(jqParam) {
+    var param = $.extend(true, {
+        gridid: "#grid-table",
+        pagerid: "#grid-pager",
+        width: 1100,
+        height: $(window).height() - 320,
+        url: '',
+        data: '',
+        colNames: '',
+        colModel: '',
+        rowNum: 20,
+        sortname: 'inittime',
+        sortorder: 'desc'
+    }, jqParam);
+    var grid_selector = param.gridid;
+    var pager_selector = param.pagerid;
+
+    //resize to fit page size
+    // $(window).on('resize.jqGrid', function () {
+    //     $(grid_selector).jqGrid('setGridWidth', $(window).width() - 240).jqGrid('setGridHeight', $(window).height() - 320);
+    // });
+
+    jQuery(grid_selector).jqGrid({
+        //后台请求数据的json地址
+        url: param.url,
+        datatype: "json",
+        width: param.width,
+        height: param.width,
+        ajaxSelectOptions: {
+            data: param.data
+        },
+        colNames: param.colNames,
+        colModel: param.colModel,
+        viewrecords: true,
+        //默认排序的字段
+        sortname: param.sortname,
+        sortorder: param.sortorder,
+        //初始化pegeSize
+        rowNum: param.rowNum,
+        rowList: [5, 10, 20, 30],
+        pager: pager_selector,
+        altRows: false,
+        loadComplete: function () {
+        },
+        jsonReader: {
+            //返回json的格式匹配
+            root: "rows",
+            page: "page",
+            total: "total",
+            records: "records",
+            repeatitems: false,
+            cell: "cell",
+            id: "id"
+        }
+    });
+    //窗口大小变化重新缩放表格
+    $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
+
+    //navButtons
+    var viewOptions = {
+        //view record form
+        recreateForm: true,
+        beforeShowForm: function (e) {
+            var form = $(e[0]);
+            form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+        }
+    }
+
+    jQuery(grid_selector).jqGrid('navGrid', pager_selector,
+
+        { //navbar options
+            //是否显示编辑按钮
+            edit: false,
+            editicon: ' fa fa-pencil blue',
+            //是否显示添加按钮
+            add: false,
+            addicon: ' fa fa-plus-circle purple',
+            //是否显示删除按钮
+            del: false,
+            delicon: ' fa fa-trash-o red',
+            //是否显示搜索按钮
+            search: false,
+            searchicon: 'fa fa-search orange',
+            //刷新按钮
+            refresh: true,
+            refreshicon: ' fa fa-refresh green',
+            //查看数据按钮
+            view: false,
+            viewicon: 'fa fa-search-plus grey'
+        },
+        {},
+        {},
+        {
+            //delete record form
+        },
+        {
+            //search form
+            recreateForm: true,
+            afterShowSearch: function (e) {
+                var form = $(e[0]);
+                form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+            },
+            afterRedraw: function () {
+            }
+            ,
+            //支持组合搜索
+            multipleSearch: true
+            /**
+             multipleGroup:true,
+             showQuery: true
+             */
+        },
+        viewOptions
+    );
+
+}
+
+
+var AD_WRAP = {
+    showAd: function (a, b, c, d, e) {
+        console.log(a + ":" + b + ":" + c + ":" + d + ":" + e);
+    }
+}
+
+// 对Date的扩展，将 Date 转化为指定格式的String
+// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，
+// 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
+// 例子：
+// (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423
+// (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18
+Date.prototype.Format = function (fmt) { //author: meizz
+    var o = {
+        "M+": this.getMonth() + 1,                 //月份
+        "d+": this.getDate(),                    //日
+        "h+": this.getHours(),                   //小时
+        "m+": this.getMinutes(),                 //分
+        "s+": this.getSeconds(),                 //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds()             //毫秒
+    };
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+
+
+String.prototype.endWith = function (s) {
+    if (s == null || s == "" || this.length == 0 || s.length > this.length)
+        return false;
+    if (this.substring(this.length - s.length) == s)
+        return true;
+    else
+        return false;
+    return true;
+}
+
+String.prototype.startWith = function (s) {
+    if (s == null || s == "" || this.length == 0 || s.length > this.length)
+        return false;
+    if (this.substr(0, s.length) == s)
+        return true;
+    else
+        return false;
+    return true;
+}
