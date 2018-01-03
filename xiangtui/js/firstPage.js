@@ -78,9 +78,9 @@ $(function () {
     function goScroll() {
         var topHeight = $(window).scrollTop();
         if(topHeight>80){
-            $("#aside").show();
+            $("aside#aside").show();
         }else{
-            $("#aside").hide();
+            $("aside#aside").hide();
         }
 
     }
@@ -122,24 +122,16 @@ $(function () {
 
         // 当滚动条滚动到数字的时候，数字开始变化，需要判断什么时候滚动到数字
        $(window).scroll(function () {
-           var scrollTop = $(window).scrollTop();
-           var height = $(window).height();
-           var numTop = $("#enterprise p .num").offset().top;
-           if(scrollTop+height>=numTop){
-               numAnimate();
-               flag = false
+           if($("#enterprise p .num").length > 0){
+               var scrollTop = $(window).scrollTop();
+               var height = $(window).height();
+               var numTop = $("#enterprise p .num").offset().top;
+               if(scrollTop+height>=numTop){
+                   numAnimate();
+                   flag = false
+               }
            }
        })
-
-
-
-
-
-
-
-
-
-
 
 
 });

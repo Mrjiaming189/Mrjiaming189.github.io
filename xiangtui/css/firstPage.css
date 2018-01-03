@@ -405,18 +405,18 @@ img {
 }
 
 /*!*返回顶部*!*/
-#aside {
+aside#aside {
     position: fixed;
     bottom: 0;
     right: 10px;
     z-index: 20
 }
-#aside ul{
+aside#aside ul{
     width:132px ;
 
 }
-#aside ul li{position: relative;}
-#aside ul li .before {
+aside#aside ul li{position: relative;}
+aside#aside ul li .before {
     width: 55px;
     height: 55px;
     margin: 0 auto 10px;
@@ -426,7 +426,7 @@ img {
     background: #fe921f;
     transition: all 0.5s;
 }
-#aside ul li .before a {
+aside#aside ul li .before a {
     width: 132px;
     height: 55px;
     line-height: 55px;
@@ -438,7 +438,7 @@ img {
     text-decoration: none;
 }
 
-#aside ul li .before  a span {
+aside#aside ul li .before  a span {
     display: inline-block;
     width: 31px;
     height: 33px;
@@ -446,29 +446,29 @@ img {
     margin-left: 14px;
 }
 
-#aside ul li:nth-child(1) span {
+aside#aside ul li:nth-child(1) span {
     background: url("../img/icon_pc.png") no-repeat -123px 0;
 }
 
-#aside ul li:nth-child(2) span {
+aside#aside ul li:nth-child(2) span {
     background: url("../img/icon_pc.png") no-repeat -153px 0;
 }
 
-#aside ul li:nth-child(3) span {
+aside#aside ul li:nth-child(3) span {
     background: url("../img/icon_pc.png") no-repeat -183px 0;
 }
 
-#aside ul li:nth-child(4) span {
+aside#aside ul li:nth-child(4) span {
     background: url("../img/icon_pc.png") no-repeat -213px 0;
 }
 
-#aside ul li:nth-child(2) .after {
+aside#aside ul li:nth-child(2) .after {
     position: absolute;
     top: -80px;
     left: -138px;
 }
 
-#aside ul li:nth-child(4) .after  {
+aside#aside ul li:nth-child(4) .after  {
     position: absolute;
     top: -90px;
     left: -138px;
@@ -477,15 +477,15 @@ img {
     text-align: center;
     background: #fff;
 }
-#aside ul li:nth-child(4) .after img{
+aside#aside ul li:nth-child(4) .after img{
     width: 132px;
     height: 132px;
 }
-#aside ul li .after{
+aside#aside ul li .after{
     display: none;
 }
-#aside ul li .before:hover{width: 132px;}
-#aside ul li:hover .after{display: block}
+aside#aside ul li .before:hover{width: 132px;}
+aside#aside ul li:hover .after{display: block}
 
 
 
